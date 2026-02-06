@@ -1,0 +1,685 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SWJTU CTF OJ</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+        body { font-family: 'Inter', sans-serif; background-color: #f8fafc; }
+        .nav-item:hover { color: #2563eb; background-color: #eff6ff; }
+        .dropdown-shadow { box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1); }
+        /* 运势卡片渐变 */
+        .luck-gradient { background: linear-gradient(135deg, #ffffff 0%, #eff6ff 100%); }
+        /* 按钮反馈动画 */
+        .btn-interact { transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); }
+        .btn-interact:hover { transform: translateY(-2px); }
+        .btn-interact:active { transform: translateY(0) scale(0.95); }
+
+        /* 水波纹效果 */
+        .btn-ripple { position: relative; overflow: hidden; }
+        .ripple {
+            position: absolute;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.4);
+            transform: scale(0);
+            animation: ripple-anim 0.6s linear;
+            pointer-events: none;
+        }
+        @keyframes ripple-anim {
+            to { transform: scale(4); opacity: 0; }
+        }
+    </style>
+</head>
+<body class="text-slate-800">
+
+    <!-- ================= 1. 全局顶栏 ================= -->
+    <header class="sticky top-0 z-50 w-full bg-white/90 backdrop-blur-md border-b border-slate-200">
+        <div class="max-w-[1536px] mx-auto h-16 px-6 flex items-center justify-between">
+            
+            <!-- 左侧：Logo + 导航 -->
+            <div class="flex items-center gap-8">
+                <div class="flex items-center gap-2.5 cursor-pointer">
+                    <div class="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center text-white shadow-lg shadow-blue-200">
+                        <i data-lucide="terminal" class="w-5 h-5"></i>
+                    </div>
+                    <span class="text-xl font-black tracking-tight">SWJTU <span class="text-blue-600">CTF OJ</span></span>
+                </div>
+                <nav class="flex items-center gap-1">
+                    <a href="#" class="btn-interact flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-bold text-blue-600 bg-blue-50">
+                        <i data-lucide="swords" class="w-4 h-4"></i>
+                        训练
+                    </a>
+                    <a href="#" class="btn-interact flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium text-slate-500 hover:bg-slate-50">
+                        <i data-lucide="flag" class="w-4 h-4"></i>
+                        赛事
+                    </a>
+                    <a href="#" class="btn-interact flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium text-slate-500 hover:bg-slate-50">
+                        <i data-lucide="message-square" class="w-4 h-4"></i>
+                        论坛
+                    </a>
+                </nav>
+            </div>
+
+            <!-- 右侧：搜索 + 容器 + 工具 + 头像 -->
+            <div class="flex items-center gap-3">
+                <!-- 搜索框：短小、灰色边框、圆角与容器按钮一致 -->
+                <div class="relative group">
+                    <i data-lucide="search" class="absolute left-3 top-1/2 -translate-y-1/2 w-4 b-4 text-slate-400"></i>
+                    <input type="text" placeholder="搜索题目ID、名称..." 
+                        class="w-48 h-9 pl-9 pr-4 bg-slate-50 border border-slate-200 rounded-full text-sm focus:outline-none focus:border-blue-400 focus:bg-white focus:w-64 transition-all">
+                </div>
+
+                <!-- 容器监控按钮 (有运行中状态) -->
+                <div class="relative z-50">
+                    <div id="container-btn" class="flex items-center gap-2 px-3 py-1.5 rounded-full border border-blue-200 bg-blue-50 text-blue-600 cursor-pointer hover:shadow-md transition-all">
+                        <i data-lucide="box" class="w-4 h-4"></i>
+                        <span class="text-sm font-mono font-bold">1/3</span>
+                    </div>
+                    
+                    <!-- 容器下拉列表 -->
+                    <div id="container-dropdown" class="absolute top-full right-0 mt-2 w-80 bg-white rounded-xl shadow-xl border border-slate-100 p-3 hidden dropdown-shadow animate-in fade-in slide-in-from-top-2 duration-200">
+                        <div class="flex justify-between items-center mb-2 px-1">
+                            <span class="text-xs font-bold text-slate-500 uppercase tracking-wider">Running Containers</span>
+                            <span class="text-xs text-blue-600 font-bold bg-blue-50 px-2 py-0.5 rounded-full">1/3</span>
+                        </div>
+                        
+                        <div class="space-y-2">
+                            <!-- 容器 1: 时间不足 (可续时) -->
+                            <div class="bg-slate-50 p-3 rounded-lg border border-slate-100 hover:border-blue-200 transition-colors">
+                                <div class="flex justify-between items-start mb-2">
+                                    <div>
+                                        <div class="font-bold text-sm text-slate-800">pwn_stack_overflow</div>
+                                        <div class="text-xs text-red-500 font-mono mt-0.5 flex items-center gap-1">
+                                            <i data-lucide="clock" class="w-3 h-3"></i> 00:08:45
+                                        </div>
+                                    </div>
+                                    <div class="px-2 py-1 bg-green-100 text-green-700 text-xs font-bold rounded">Running</div>
+                                </div>
+                                <div class="flex gap-2">
+                                    <button class="flex-1 flex items-center justify-center gap-1 py-1.5 bg-white border border-slate-200 rounded text-xs font-bold text-slate-600 hover:text-blue-600 hover:border-blue-600 transition-colors">
+                                        <i data-lucide="refresh-cw" class="w-3 h-3"></i> 续时
+                                    </button>
+                                    <button class="flex-1 flex items-center justify-center gap-1 py-1.5 bg-white border border-slate-200 rounded text-xs font-bold text-slate-600 hover:text-red-600 hover:border-red-600 transition-colors">
+                                        <i data-lucide="trash-2" class="w-3 h-3"></i> 销毁
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        
+                         <div class="mt-2 text-center">
+                             <span class="text-xs text-slate-400">Next refresh in 30s</span>
+                         </div>
+                    </div>
+                </div>
+
+                <div class="w-px h-6 bg-slate-200 mx-1"></div>
+
+                <!-- 系统工具 -->
+                <button class="p-2 text-slate-400 hover:text-blue-600 rounded-full"><i data-lucide="bell" class="w-5 h-5"></i></button>
+                <button class="p-2 text-slate-400 hover:text-blue-600 rounded-full"><i data-lucide="settings" class="w-5 h-5"></i></button>
+
+                <!-- 头像 -->
+                <div class="relative z-50">
+                    <div id="avatar-btn" class="w-9 h-9 rounded-full bg-blue-100 border border-slate-200 overflow-hidden cursor-pointer relative ring-2 ring-transparent hover:ring-blue-100 transition-all">
+                        <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Felix" alt="avatar">
+                    </div>
+                    <!-- 状态 Emoji -->
+                    <div class="absolute -bottom-0.5 -right-0.5 bg-white rounded-full h-4 w-4 flex items-center justify-center text-[10px] shadow-sm border border-slate-100 cursor-pointer pointer-events-none">
+                        🤔
+                    </div>
+
+                    <!-- 头像下拉菜单 -->
+                    <div id="avatar-dropdown" class="absolute top-full right-0 mt-2 w-48 bg-white rounded-xl shadow-xl border border-slate-100 py-1 hidden dropdown-shadow animate-in fade-in slide-in-from-top-2 duration-200">
+                        <!-- 状态显示/修改 -->
+                        <div class="px-3 py-2 flex items-center justify-between hover:bg-slate-50 cursor-pointer rounded-t-xl">
+                            <div class="flex items-center gap-2">
+                                <span class="text-base">🤔</span>
+                                <span class="text-sm font-bold text-slate-700">Thinking...</span>
+                            </div>
+                            <button class="text-slate-400 hover:text-blue-600">
+                                <i data-lucide="pencil" class="w-3 h-3"></i>
+                            </button>
+                        </div>
+                        
+                        <div class="h-px bg-slate-100 my-1"></div>
+
+                        <a href="#" class="flex items-center gap-2 px-3 py-2 text-sm font-medium text-slate-600 hover:bg-slate-50 hover:text-slate-900">
+                            <i data-lucide="settings" class="w-4 h-4"></i>
+                            个人设置
+                        </a>
+
+                        <div class="h-px bg-slate-100 my-1"></div>
+
+                        <a href="#" class="flex items-center gap-2 px-3 py-2 text-sm font-medium text-red-600 hover:bg-red-50">
+                            <i data-lucide="log-out" class="w-4 h-4"></i>
+                            退出
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- ================= 2. 首页核心区域 ================= -->
+    <main class="max-w-[1536px] mx-auto p-6 space-y-8">
+        
+        <!-- 上部布局：Banner(2/3) + 打卡(1/3) -->
+        <section class="flex items-stretch gap-6 h-[320px]">
+            
+            <!-- Banner 区域 (左 2/3) -->
+            <div class="w-2/3 relative group overflow-hidden rounded-3xl shadow-lg bg-slate-800 h-full">
+                <!-- 模拟 Banner 图片 -->
+                <img src="https://images.unsplash.com/photo-1550751827-4bd374c3f58b?auto=format&fit=crop&q=80&w=1200" 
+                    class="w-full h-full object-cover opacity-60 group-hover:scale-105 transition-transform duration-700">
+                
+                <!-- Banner 内容 -->
+                <div class="absolute inset-0 p-10 flex flex-col justify-end bg-gradient-to-t from-slate-900/80 to-transparent">
+                    <span class="px-3 py-1 bg-blue-600 text-white text-xs font-bold rounded-full w-fit mb-4">正在进行</span>
+                    <h2 class="text-4xl font-black text-white mb-2">SWJTU Rookie CTF Game 2026</h2>
+                    <p class="text-slate-200 max-w-lg">本年CTF新秀杯已经开启，点击进入赛事详情页面报名参赛。</p>
+                </div>
+
+                <!-- 轮播指示器 -->
+                <div class="absolute bottom-6 right-10 flex gap-2">
+                    <div class="w-8 h-1.5 bg-blue-500 rounded-full"></div>
+                    <div class="w-2 h-1.5 bg-white/50 rounded-full"></div>
+                    <div class="w-2 h-1.5 bg-white/50 rounded-full"></div>
+                </div>
+            </div>
+
+            <!-- 打卡 & 运势区域 (右 1/3) -->
+            <div id="checkin-section" class="w-1/3 flex flex-col">
+                <!-- 未打卡状态 -->
+                <div id="before-checkin" class="flex-1 bg-white border border-slate-200 rounded-3xl flex flex-col items-center justify-center p-8 shadow-sm">
+                    <div class="w-20 h-20 bg-blue-50 rounded-full flex items-center justify-center mb-6">
+                        <i data-lucide="calendar-check-2" class="w-10 h-10 text-blue-600"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-2">每日签到</h3>
+                    <p class="text-slate-400 text-sm mb-8 text-center">@雷神托尔 jrys</p>
+                    <button onclick="doCheckin(event)" class="btn-ripple w-full py-4 bg-blue-600 text-white rounded-2xl font-bold text-lg hover:bg-blue-700 hover:shadow-lg transition-all active:scale-95">
+                        立即打卡
+                    </button>
+                </div>
+
+                <!-- 已打卡状态 (初始隐藏) -->
+                <div id="after-checkin" class="hidden flex-1 border border-blue-100 rounded-3xl p-6 luck-gradient shadow-md flex flex-col relative overflow-hidden">
+                    <div class="absolute top-0 right-0 p-4 opacity-10">
+                        <i data-lucide="sparkles" class="w-24 h-24 text-blue-600"></i>
+                    </div>
+
+                    <div class="flex justify-between items-start mb-6">
+                        <div>
+                            <p class="text-slate-400 text-xs font-bold uppercase tracking-widest">今日运势</p>
+                            <h3 class="text-3xl font-black text-blue-600 mt-1">中吉</h3>
+                        </div>
+                        <div class="text-right">
+                            <p class="text-slate-400 text-xs font-bold uppercase tracking-widest">Streak</p>
+                            <p class="text-2xl font-mono font-bold text-slate-700">7 Days</p>
+                        </div>
+                    </div>
+
+                    <!-- 宜/忌 -->
+                    <div class="space-y-3">
+                        <div class="flex items-center gap-3">
+                            <div class="w-8 h-8 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0">宜</div>
+                            <div>
+                                <p class="text-xs font-bold text-slate-800">研究 SQL 注入</p>
+                                <p class="text-[10px] text-slate-400 leading-tight">万物皆可 Union，今天灵感爆棚</p>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-3">
+                            <div class="w-8 h-8 bg-red-100 text-red-600 rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0">忌</div>
+                            <div>
+                                <p class="text-xs font-bold text-slate-800">强制删除容器</p>
+                                <p class="text-[10px] text-slate-400 leading-tight">小心没做完题数据就丢了</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 每日一题 -->
+                    <div class="mt-4 p-3 bg-white/60 rounded-2xl border border-blue-100/50 shadow-sm">
+                        <div class="flex justify-between items-center mb-1.5">
+                            <div class="flex items-center gap-1.5">
+                                <span class="w-1.5 h-1.5 bg-blue-500 rounded-full animate-pulse"></span>
+                                <span class="text-[10px] font-bold text-blue-600 uppercase tracking-wider">每日一题</span>
+                            </div>
+                            <span class="text-[10px] font-mono text-slate-400">#PWN-082</span>
+                        </div>
+                        <div class="flex items-center justify-between">
+                            <span class="text-sm font-bold text-slate-700 truncate mr-2">Easy_Heap_OverFlow</span>
+                            <button class="btn-interact px-3 py-1 bg-blue-600 text-white text-[10px] font-bold rounded-lg hover:bg-blue-700 shadow-md shadow-blue-200">去挑战</button>
+                        </div>
+                    </div>
+
+                    <div class="mt-auto pt-3 border-t border-blue-50 text-center">
+                        <p class="text-[10px] text-blue-400/80 italic">“ 真正的黑客，在命令行里寻找诗意。” </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 3. 中部功能区：题目推荐 (3/4) + 全站公告 (1/4) -->
+        <section class="grid grid-cols-4 gap-6">
+            <!-- 左侧：题目推荐 -->
+            <div class="col-span-3 space-y-4">
+                <div class="flex items-center justify-between px-2">
+                    <h3 class="text-lg font-bold flex items-center gap-2">
+                        <i data-lucide="sparkles" class="w-5 h-5 text-amber-500"></i>
+                        推荐训练
+                    </h3>
+                    <a href="#" class="text-xs font-bold text-blue-600 hover:text-blue-700 flex items-center gap-1">
+                        查看全部 <i data-lucide="chevron-right" class="w-3 h-3"></i>
+                    </a>
+                </div>
+                
+                <div class="grid grid-cols-3 gap-6 h-[260px]">
+                    <!-- 推荐题单 1 (Web - 电光青) -->
+                    <div class="group relative overflow-hidden rounded-3xl border border-slate-200 bg-white hover:border-cyan-500 hover:shadow-2xl hover:shadow-cyan-200/50 transition-all cursor-pointer flex flex-col p-5">
+                        <div class="absolute top-0 right-0 w-32 h-32 bg-cyan-500/10 -mr-10 -mt-10 rounded-full blur-2xl group-hover:bg-cyan-500/20 transition-colors"></div>
+                        <div class="flex items-center gap-3 mb-4">
+                            <div class="w-10 h-10 bg-gradient-to-br from-cyan-400 to-cyan-600 rounded-xl flex items-center justify-center text-white shadow-lg shadow-cyan-200 group-hover:scale-110 transition-transform">
+                                <i data-lucide="globe" class="w-5 h-5"></i>
+                            </div>
+                            <div>
+                                <h4 class="text-sm font-black text-slate-800">Web 入门</h4>
+                                <p class="text-[9px] text-cyan-600 font-black uppercase tracking-widest">Master Web</p>
+                            </div>
+                        </div>
+                        <!-- 题目预览列表 -->
+                        <div class="space-y-2 flex-1">
+                            <div class="flex items-center justify-between p-2 bg-slate-50 rounded-lg group-hover:bg-cyan-50 transition-colors">
+                                <div class="flex items-center gap-2 overflow-hidden">
+                                    <i data-lucide="globe" class="w-3.5 h-3.5 text-cyan-500 flex-shrink-0"></i>
+                                    <span class="text-[11px] font-bold text-slate-700 truncate">HTTP 基础：Header 隐写</span>
+                                </div>
+                                <span class="text-[9px] font-black px-1.5 py-0.5 bg-emerald-500 text-white rounded flex-shrink-0">EASY</span>
+                            </div>
+                            <div class="flex items-center justify-between p-2 bg-slate-50 rounded-lg group-hover:bg-cyan-50 transition-colors">
+                                <div class="flex items-center gap-2 overflow-hidden">
+                                    <i data-lucide="globe" class="w-3.5 h-3.5 text-cyan-500 flex-shrink-0"></i>
+                                    <span class="text-[11px] font-bold text-slate-700 truncate">SQLi 1：简单布尔盲注</span>
+                                </div>
+                                <span class="text-[9px] font-black px-1.5 py-0.5 bg-emerald-500 text-white rounded flex-shrink-0">EASY</span>
+                            </div>
+                            <div class="flex items-center justify-between p-2 bg-slate-50 rounded-lg group-hover:bg-cyan-50 transition-colors">
+                                <div class="flex items-center gap-2 overflow-hidden">
+                                    <i data-lucide="globe" class="w-3.5 h-3.5 text-cyan-500 flex-shrink-0"></i>
+                                    <span class="text-[11px] font-bold text-slate-700 truncate">XSS 实战：Cookie 劫持</span>
+                                </div>
+                                <span class="text-[9px] font-black px-1.5 py-0.5 bg-amber-500 text-white rounded flex-shrink-0">MED</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 推荐题单 2 (上新 - 多彩炫目) -->
+                    <div class="group relative overflow-hidden rounded-3xl border border-slate-200 bg-white hover:border-indigo-500 hover:shadow-2xl hover:shadow-indigo-200/50 transition-all cursor-pointer flex flex-col p-5">
+                        <div class="absolute top-0 right-0 w-32 h-32 bg-indigo-500/10 -mr-10 -mt-10 rounded-full blur-2xl group-hover:bg-indigo-500/20 transition-colors"></div>
+                        <div class="flex items-center gap-3 mb-4">
+                            <div class="w-10 h-10 bg-gradient-to-br from-indigo-400 to-indigo-600 rounded-xl flex items-center justify-center text-white shadow-lg shadow-indigo-200 group-hover:scale-110 transition-transform">
+                                <i data-lucide="zap" class="w-5 h-5"></i>
+                            </div>
+                            <div>
+                                <h4 class="text-sm font-black text-slate-800">题目上新</h4>
+                                <p class="text-[9px] text-indigo-600 font-black uppercase tracking-widest">New Challenges</p>
+                            </div>
+                        </div>
+                        <!-- 题目预览列表 -->
+                        <div class="space-y-2 flex-1">
+                            <div class="flex items-center justify-between p-2 bg-slate-50 rounded-lg group-hover:bg-rose-50 transition-colors">
+                                <div class="flex items-center gap-2 overflow-hidden">
+                                    <i data-lucide="terminal" class="w-3.5 h-3.5 text-rose-500 flex-shrink-0"></i>
+                                    <span class="text-[11px] font-bold text-slate-700 truncate">ShellCode 入门：Orw</span>
+                                </div>
+                                <span class="text-[9px] font-black px-1.5 py-0.5 bg-rose-500 text-white rounded flex-shrink-0 uppercase">HARD</span>
+                            </div>
+                            <div class="flex items-center justify-between p-2 bg-slate-50 rounded-lg group-hover:bg-emerald-50 transition-colors">
+                                <div class="flex items-center gap-2 overflow-hidden">
+                                    <i data-lucide="cpu" class="w-3.5 h-3.5 text-emerald-500 flex-shrink-0"></i>
+                                    <span class="text-[11px] font-bold text-slate-700">Go 程序逆向：SimpleRE</span>
+                                </div>
+                                <span class="text-[9px] font-black px-1.5 py-0.5 bg-amber-500 text-white rounded flex-shrink-0 uppercase">MED</span>
+                            </div>
+                            <div class="flex items-center justify-between p-2 bg-slate-50 rounded-lg group-hover:bg-amber-50 transition-colors">
+                                <div class="flex items-center gap-2 overflow-hidden">
+                                    <i data-lucide="key" class="w-3.5 h-3.5 text-amber-500 flex-shrink-0"></i>
+                                    <span class="text-[11px] font-bold text-slate-700 truncate">RSA 进阶：维纳攻击</span>
+                                </div>
+                                <span class="text-[9px] font-black px-1.5 py-0.5 bg-rose-500 text-white rounded flex-shrink-0 uppercase">HARD</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 正在进行的比赛 (竞技风) -->
+                    <div class="group relative overflow-hidden rounded-3xl border border-blue-200 bg-gradient-to-br from-blue-600 to-blue-800 hover:shadow-2xl hover:shadow-blue-300 transition-all cursor-pointer flex flex-col p-5 text-white">
+                        <div class="absolute top-0 right-0 w-32 h-32 bg-white/10 -mr-10 -mt-10 rounded-full blur-2xl"></div>
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="flex items-center gap-2">
+                                <div class="w-2 h-2 bg-red-400 rounded-full animate-ping"></div>
+                                <span class="text-[10px] font-black uppercase tracking-widest">LIVE NOW</span>
+                            </div>
+                            <span class="text-[10px] font-mono bg-white/20 px-2 py-0.5 rounded-full">#2026-Rookie</span>
+                        </div>
+                        
+                        <h4 class="text-lg font-black leading-tight mb-4">SWJTU Rookie CTF Game 2026</h4>
+                        
+                        <div class="space-y-4 flex-1">
+                            <!-- 排名与时间 -->
+                            <div class="flex justify-between items-end">
+                                <div>
+                                    <p class="text-[10px] text-blue-200 font-bold uppercase">Current Rank</p>
+                                    <p class="text-2xl font-black italic">#27 <span class="text-xs font-normal opacity-60">/ 78</span></p>
+                                </div>
+                                <div class="text-right">
+                                    <p class="text-[10px] text-blue-200 font-bold uppercase">Time Left</p>
+                                    <p class="text-sm font-mono font-bold">92d 17h 00m</p>
+                                </div>
+                            </div>
+                            <!-- 进度条 -->
+                            <div class="space-y-1.5">
+                                <div class="flex justify-between text-[10px] font-bold opacity-80">
+                                    <span>PROGRESS</span>
+                                    <span>65%</span>
+                                </div>
+                                <div class="w-full h-1.5 bg-white/20 rounded-full overflow-hidden">
+                                    <div class="h-full bg-white rounded-full shadow-[0_0_10px_rgba(255,255,255,0.5)]" style="width: 65%"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 右侧：全站公告 (极客深色风) -->
+            <div class="space-y-4">
+                <div class="flex items-center justify-between px-2">
+                    <h3 class="text-lg font-bold flex items-center gap-2">
+                        <i data-lucide="megaphone" class="w-5 h-5 text-blue-600"></i>
+                        全站公告
+                    </h3>
+                </div>
+                
+                <div class="bg-slate-900 border border-slate-800 rounded-3xl p-5 h-[260px] flex flex-col shadow-2xl relative overflow-hidden">
+                    <!-- 背景装饰 -->
+                    <div class="absolute top-0 right-0 w-24 h-24 bg-blue-500/10 blur-3xl"></div>
+                    
+                    <div class="relative space-y-4 overflow-y-auto pr-1 custom-scrollbar">
+                        <!-- 公告条目 1 -->
+                        <div class="group cursor-pointer">
+                            <div class="flex justify-between items-start">
+                                <div class="flex flex-col">
+                                    <span class="text-[9px] font-black text-blue-400 uppercase tracking-tighter mb-0.5">Competition</span>
+                                    <p class="text-xs font-bold text-slate-200 group-hover:text-blue-400 transition-colors line-clamp-1">春季联赛 (Spring Cup) 即将报名</p>
+                                </div>
+                                <span class="text-[9px] font-mono text-slate-500 ml-2">02-06</span>
+                            </div>
+                        </div>
+                        
+                        <!-- 公告条目 2 -->
+                        <div class="group cursor-pointer border-t border-slate-800 pt-3">
+                            <div class="flex justify-between items-start">
+                                <div class="flex flex-col">
+                                    <span class="text-[9px] font-black text-emerald-400 uppercase tracking-tighter mb-0.5">Update</span>
+                                    <p class="text-xs font-bold text-slate-200 group-hover:text-emerald-400 transition-colors line-clamp-1">V2.4.0 更新：新增容器续时功能</p>
+                                </div>
+                                <span class="text-[9px] font-mono text-slate-500 ml-2">02-05</span>
+                            </div>
+                        </div>
+
+                        <!-- 公告条目 3 -->
+                        <div class="group cursor-pointer border-t border-slate-800 pt-3">
+                            <div class="flex justify-between items-start">
+                                <div class="flex flex-col">
+                                    <span class="text-[9px] font-black text-amber-400 uppercase tracking-tighter mb-0.5">Notice</span>
+                                    <p class="text-xs font-bold text-slate-200 group-hover:text-amber-400 transition-colors line-clamp-1">关于寒假期间服务器维护的通知</p>
+                                </div>
+                                <span class="text-[9px] font-mono text-slate-500 ml-2">02-03</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <button class="relative mt-auto w-full py-2 bg-slate-800 text-slate-300 text-[10px] font-black rounded-xl hover:bg-slate-700 hover:text-white transition-all border border-slate-700">
+                        SHOW ALL HISTORY
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- 4. 下方内容区：瀑布流 (3/4) + 侧边栏 (1/4) -->
+        <section class="grid grid-cols-4 gap-6 pb-12">
+            <!-- 左侧：Activity Feed -->
+            <div class="col-span-3">
+                <h3 class="text-lg font-bold flex items-center gap-2 mb-6 px-2">
+                    <i data-lucide="activity" class="w-5 h-5 text-blue-600"></i>
+                    最新动态
+                </h3>
+                
+                <div class="space-y-6 relative before:absolute before:left-4 before:top-2 before:bottom-2 before:w-0.5 before:bg-slate-200">
+                    
+                    <!-- Feed Item 1: New Challenge -->
+                    <div class="relative pl-12">
+                        <div class="absolute left-0 top-0 w-8 h-8 bg-white border-2 border-slate-200 rounded-full flex items-center justify-center z-10">
+                            <i data-lucide="plus" class="w-4 h-4 text-emerald-500"></i>
+                        </div>
+                        <div class="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm hover:border-blue-300 transition-colors group cursor-pointer">
+                            <div class="flex justify-between items-start mb-2">
+                                <div class="flex items-center gap-2">
+                                    <span class="px-2 py-0.5 bg-emerald-100 text-emerald-700 text-[10px] font-bold rounded-full">New Challenge</span>
+                                    <span class="text-xs text-slate-400">2 hours ago</span>
+                                </div>
+                                <button class="text-slate-300 group-hover:text-blue-500"><i data-lucide="more-horizontal" class="w-4 h-4"></i></button>
+                            </div>
+                            <h4 class="text-base font-bold text-slate-800 mb-2 group-hover:text-blue-600 transition-colors">Kernel Pwn 101: Ret2User</h4>
+                            <p class="text-sm text-slate-500 mb-4 line-clamp-2">Added a new kernel pwn challenge designed for beginners. Learn how to bypass SMEP/SMAP and escalate privileges.</p>
+                            <div class="flex items-center gap-4">
+                                <div class="flex items-center gap-1.5">
+                                    <i data-lucide="target" class="w-3.5 h-3.5 text-slate-400"></i>
+                                    <span class="text-xs font-bold text-slate-600">45 Solves</span>
+                                </div>
+                                <div class="flex items-center gap-1.5">
+                                    <i data-lucide="tag" class="w-3.5 h-3.5 text-slate-400"></i>
+                                    <span class="text-xs font-mono text-slate-500">kernel, pwn</span>
+                                </div>
+                                <div class="flex -space-x-2 ml-auto">
+                                    <img class="w-6 h-6 rounded-full border-2 border-white" src="https://api.dicebear.com/7.x/avataaars/svg?seed=A" alt="">
+                                    <img class="w-6 h-6 rounded-full border-2 border-white" src="https://api.dicebear.com/7.x/avataaars/svg?seed=B" alt="">
+                                    <div class="w-6 h-6 rounded-full border-2 border-white bg-slate-100 flex items-center justify-center text-[8px] font-bold text-slate-500">+12</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Feed Item 2: Writeup -->
+                    <div class="relative pl-12">
+                        <div class="absolute left-0 top-0 w-8 h-8 bg-white border-2 border-slate-200 rounded-full flex items-center justify-center z-10">
+                            <i data-lucide="book-open" class="w-4 h-4 text-blue-500"></i>
+                        </div>
+                        <div class="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm hover:border-blue-300 transition-colors">
+                            <div class="flex justify-between items-start mb-2">
+                                <div class="flex items-center gap-2">
+                                    <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Rikka" class="w-5 h-5 rounded-full bg-slate-100">
+                                    <span class="text-xs font-bold text-slate-700">Rikka</span>
+                                    <span class="text-xs text-slate-400">posted a write-up</span>
+                                    <span class="text-xs text-slate-400 mx-1">·</span>
+                                    <span class="text-xs text-slate-400">5 hours ago</span>
+                                </div>
+                            </div>
+                            <h4 class="text-base font-bold text-slate-800 mb-2">Solution for "Easy Heap OverFlow"</h4>
+                            <div class="bg-slate-50 rounded-xl p-3 mb-3 border border-slate-100 font-mono text-xs text-slate-600">
+                                <span class="text-blue-600">from</span> pwn <span class="text-blue-600">import</span> *<br>
+                                p = process(<span class="text-green-600">"./pwn"</span>)<br>
+                                <span class="text-slate-400"># Leak heap base address...</span>
+                            </div>
+                            <div class="flex items-center gap-4">
+                                <button class="flex items-center gap-1.5 text-xs font-bold text-slate-500 hover:text-blue-600 transition-colors">
+                                    <i data-lucide="thumbs-up" class="w-3.5 h-3.5"></i> 24
+                                </button>
+                                <button class="flex items-center gap-1.5 text-xs font-bold text-slate-500 hover:text-blue-600 transition-colors">
+                                    <i data-lucide="message-square" class="w-3.5 h-3.5"></i> 8
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Feed Item 3: Forum Discussion -->
+                    <div class="relative pl-12">
+                         <div class="absolute left-0 top-0 w-8 h-8 bg-white border-2 border-slate-200 rounded-full flex items-center justify-center z-10">
+                            <i data-lucide="message-circle" class="w-4 h-4 text-purple-500"></i>
+                        </div>
+                        <div class="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm hover:border-blue-300 transition-colors">
+                             <div class="flex justify-between items-start mb-2">
+                                <div class="flex items-center gap-2">
+                                    <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Yuta" class="w-5 h-5 rounded-full bg-slate-100">
+                                    <span class="text-xs font-bold text-slate-700">Yuta</span>
+                                    <span class="text-xs text-slate-400">started a discussion</span>
+                                    <span class="text-xs text-slate-400 mx-1">·</span>
+                                    <span class="text-xs text-slate-400">8 hours ago</span>
+                                </div>
+                            </div>
+                            <h4 class="text-base font-bold text-slate-800 mb-2">How to optimize Docker build time for web challenges?</h4>
+                            <p class="text-sm text-slate-500 mb-3">I'm currently creating a web challenge but the `docker-compose build` takes forever due to `npm install`. Any caching tips?</p>
+                             <div class="flex flex-wrap gap-2 mb-3">
+                                <span class="px-2 py-0.5 bg-slate-100 text-slate-500 text-[10px] font-bold rounded">#docker</span>
+                                <span class="px-2 py-0.5 bg-slate-100 text-slate-500 text-[10px] font-bold rounded">#devops</span>
+                            </div>
+                             <div class="flex items-center gap-4">
+                                <button class="flex items-center gap-1.5 text-xs font-bold text-slate-500 hover:text-blue-600 transition-colors">
+                                    <i data-lucide="message-square" class="w-3.5 h-3.5"></i> 15 Comments
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+                 <button class="mt-8 w-full py-3 bg-white border border-slate-200 text-slate-500 text-sm font-bold rounded-xl hover:bg-slate-50 hover:text-blue-600 transition-colors shadow-sm">
+                    Load More Activity
+                </button>
+            </div>
+
+            <!-- 右侧：侧边栏 (1/4) -->
+            <div class="col-span-1 space-y-6">
+                
+                <!-- 热门标签 -->
+                <div class="bg-white border border-slate-200 rounded-3xl p-5 shadow-sm">
+                    <h4 class="text-sm font-bold text-slate-800 mb-4 flex items-center gap-2">
+                        <i data-lucide="hash" class="w-4 h-4 text-blue-500"></i> Trending Tags
+                    </h4>
+                    <div class="flex flex-wrap gap-2">
+                        <span class="px-2.5 py-1 bg-blue-50 text-blue-600 text-[11px] font-bold rounded-lg cursor-pointer hover:bg-blue-100">#pwn</span>
+                        <span class="px-2.5 py-1 bg-slate-100 text-slate-600 text-[11px] font-bold rounded-lg cursor-pointer hover:bg-slate-200">#writeup</span>
+                        <span class="px-2.5 py-1 bg-slate-100 text-slate-600 text-[11px] font-bold rounded-lg cursor-pointer hover:bg-slate-200">#ctf2024</span>
+                        <span class="px-2.5 py-1 bg-slate-100 text-slate-600 text-[11px] font-bold rounded-lg cursor-pointer hover:bg-slate-200">#python</span>
+                        <span class="px-2.5 py-1 bg-slate-100 text-slate-600 text-[11px] font-bold rounded-lg cursor-pointer hover:bg-slate-200">#docker</span>
+                    </div>
+                </div>
+
+                <!-- 活跃大佬 -->
+                <div class="bg-white border border-slate-200 rounded-3xl p-5 shadow-sm">
+                    <h4 class="text-sm font-bold text-slate-800 mb-4 flex items-center gap-2">
+                        <i data-lucide="trophy" class="w-4 h-4 text-amber-500"></i> Top Solvers (24h)
+                    </h4>
+                    <div class="space-y-3">
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center gap-2">
+                                <span class="text-xs font-bold text-slate-400 w-3">1</span>
+                                <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=S" class="w-6 h-6 rounded-full bg-slate-100">
+                                <span class="text-xs font-bold text-slate-700">Sakura</span>
+                            </div>
+                            <span class="text-[10px] font-mono font-bold text-blue-600">850 pts</span>
+                        </div>
+                         <div class="flex items-center justify-between">
+                            <div class="flex items-center gap-2">
+                                <span class="text-xs font-bold text-slate-400 w-3">2</span>
+                                <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=K" class="w-6 h-6 rounded-full bg-slate-100">
+                                <span class="text-xs font-bold text-slate-700">Kero</span>
+                            </div>
+                            <span class="text-[10px] font-mono font-bold text-slate-500">600 pts</span>
+                        </div>
+                         <div class="flex items-center justify-between">
+                            <div class="flex items-center gap-2">
+                                <span class="text-xs font-bold text-slate-400 w-3">3</span>
+                                <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=T" class="w-6 h-6 rounded-full bg-slate-100">
+                                <span class="text-xs font-bold text-slate-700">Tomoya</span>
+                            </div>
+                            <span class="text-[10px] font-mono font-bold text-slate-500">450 pts</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <script>
+        // 初始化图标
+        lucide.createIcons();
+
+        // 模拟打卡
+        function doCheckin(e) {
+            // 水波纹效果
+            if (e) {
+                const btn = e.currentTarget;
+                const circle = document.createElement("span");
+                const diameter = Math.max(btn.clientWidth, btn.clientHeight);
+                const radius = diameter / 2;
+
+                // 获取点击位置相对于按钮的坐标
+                const rect = btn.getBoundingClientRect();
+                circle.style.width = circle.style.height = `${diameter}px`;
+                circle.style.left = `${e.clientX - rect.left - radius}px`;
+                circle.style.top = `${e.clientY - rect.top - radius}px`;
+                circle.classList.add("ripple");
+
+                const ripple = btn.getElementsByClassName("ripple")[0];
+                if (ripple) {
+                    ripple.remove();
+                }
+
+                btn.appendChild(circle);
+            }
+
+            const before = document.getElementById('before-checkin');
+            const after = document.getElementById('after-checkin');
+            before.classList.add('scale-95', 'opacity-0');
+            setTimeout(() => {
+                before.classList.add('hidden');
+                after.classList.remove('hidden');
+                after.classList.add('animate-in', 'fade-in', 'zoom-in', 'duration-500');
+            }, 300);
+        }
+
+        // 下拉菜单控制
+        const containerBtn = document.getElementById('container-btn');
+        const containerDropdown = document.getElementById('container-dropdown');
+        const avatarBtn = document.getElementById('avatar-btn');
+        const avatarDropdown = document.getElementById('avatar-dropdown');
+
+        function toggleDropdown(dropdown, otherDropdown) {
+            dropdown.classList.toggle('hidden');
+            if (otherDropdown) otherDropdown.classList.add('hidden');
+        }
+
+        containerBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            toggleDropdown(containerDropdown, avatarDropdown);
+        });
+
+        avatarBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            toggleDropdown(avatarDropdown, containerDropdown);
+        });
+
+        // 点击外部关闭
+        window.addEventListener('click', () => {
+            containerDropdown.classList.add('hidden');
+            avatarDropdown.classList.add('hidden');
+        });
+
+        // 阻止下拉菜单内部点击关闭
+        [containerDropdown, avatarDropdown].forEach(dropdown => {
+            dropdown.addEventListener('click', (e) => e.stopPropagation());
+        });
+    </script>
+</body>
+</html>
