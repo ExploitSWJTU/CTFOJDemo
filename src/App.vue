@@ -1,10 +1,5 @@
 <script setup lang="ts">
 import Header from './components/Header.vue';
-import Banner from './components/Banner.vue';
-import Challenges from './components/Challenges.vue';
-import Announcements from './components/Announcements.vue';
-import ActivityFeed from './components/ActivityFeed.vue';
-import Sidebar from './components/Sidebar.vue';
 </script>
 
 <template>
@@ -13,22 +8,8 @@ import Sidebar from './components/Sidebar.vue';
   >
     <Header />
 
-    <main class="mx-auto max-w-384 space-y-8 p-6">
-      <Banner />
-
-      <section class="grid grid-cols-4 gap-6">
-        <div class="col-span-3">
-          <Challenges />
-        </div>
-        <div class="col-span-1">
-          <Announcements />
-        </div>
-      </section>
-
-      <section class="grid grid-cols-4 gap-6 pb-12">
-        <ActivityFeed />
-        <Sidebar />
-      </section>
+    <main class="mx-auto max-w-384 p-6">
+      <router-view />
     </main>
   </div>
 </template>
@@ -40,7 +21,6 @@ body {
   font-family: 'Inter', sans-serif;
 }
 
-/* 适配 Arco Design 的黑夜模式 */
 .dark body {
   --color-bg-1: #0f172a;
   --color-bg-2: #1e293b;
@@ -56,5 +36,7 @@ body {
   --color-border-2: #334155;
   --color-border-3: #475569;
   --color-border-4: #64748b;
+  /* 解决下拉框外层的 Arco 默认边框 */
+  --color-bg-popup: transparent;
 }
 </style>

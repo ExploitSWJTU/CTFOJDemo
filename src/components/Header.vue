@@ -1,9 +1,11 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue';
+import { useRoute } from 'vue-router';
 import {
   Terminal,
   Home,
-  Trophy,
+  Swords,
+  Flag,
   MessageSquare,
   Search,
   Box,
@@ -16,11 +18,11 @@ import {
   Settings,
   Edit,
   LogOut,
-  ChevronDown,
 } from 'lucide-vue-next';
 
 const searchText = ref('');
 const isDark = ref(false);
+const route = useRoute();
 
 const toggleDarkMode = () => {
   isDark.value = !isDark.value;
@@ -57,41 +59,69 @@ const containers = ref([
   <header
     class="sticky top-0 z-50 w-full border-b border-slate-200 bg-white/90 backdrop-blur-md transition-colors dark:border-slate-800 dark:bg-slate-900/90"
   >
-    <div class="mx-auto flex h-16 max-w-[1536px] items-center justify-between px-6">
+    <div class="mx-auto flex h-16 max-w-384 items-center justify-between px-6">
       <!-- 左侧：Logo + 导航 -->
       <div class="flex items-center gap-8">
-        <div class="flex cursor-pointer items-center gap-2.5">
+        <router-link to="/" class="flex cursor-pointer items-center gap-2.5">
           <div
-            class="flex h-8 w-8 items-center justify-center rounded-lg bg-blue-600 text-white shadow-lg shadow-blue-200 dark:shadow-none"
+            class="rounded-button flex h-8 w-8 items-center justify-center bg-blue-600 text-white shadow-lg shadow-blue-200 dark:shadow-none"
           >
             <Terminal :size="20" />
           </div>
           <span class="text-xl font-black tracking-tight text-slate-800 dark:text-slate-100">
             SWJTU <span class="text-blue-600">CTF OJ</span>
           </span>
-        </div>
+        </router-link>
         <nav class="flex items-center gap-1">
-          <a
-            href="#"
-            class="flex items-center gap-2 rounded-lg bg-blue-50 px-4 py-2 text-sm font-bold text-blue-600 transition-all hover:bg-blue-100 dark:bg-blue-900/30 dark:hover:bg-blue-900/50"
+          <!-- 主页图标：变色（激活态） -->
+          <router-link
+            to="/"
+            class="rounded-button flex h-9 w-9 items-center justify-center transition-all"
+            :class="route.path === '/'
+              ? 'bg-blue-600 text-white shadow-md shadow-blue-200 dark:shadow-none'
+              : 'text-slate-500 hover:bg-slate-50 dark:text-slate-400 dark:hover:bg-slate-800'
+            "
           >
-            <Home :size="16" />
-            首页
-          </a>
-          <a
-            href="#"
-            class="flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium text-slate-500 transition-all hover:bg-slate-50 dark:text-slate-400 dark:hover:bg-slate-800"
+            <Home :size="18" />
+          </router-link>
+
+          <!-- 训练：不变色（默认态） -->
+          <router-link
+            to="/training"
+            class="rounded-button flex items-center gap-2 px-4 py-2 text-sm font-medium transition-all"
+            :class="route.path === '/training'
+              ? 'font-bold text-blue-600 dark:text-blue-400'
+              : 'text-slate-500 hover:bg-slate-50 dark:text-slate-400 dark:hover:bg-slate-800'
+            "
           >
-            <Trophy :size="16" />
+            <Swords :size="16" />
+            训练
+          </router-link>
+
+          <!-- 赛事 -->
+          <router-link
+            to="/contest"
+            class="rounded-button flex items-center gap-2 px-4 py-2 text-sm font-medium transition-all"
+            :class="route.path === '/contest'
+              ? 'font-bold text-blue-600 dark:text-blue-400'
+              : 'text-slate-500 hover:bg-slate-50 dark:text-slate-400 dark:hover:bg-slate-800'
+            "
+          >
+            <Flag :size="16" />
             赛事
-          </a>
-          <a
-            href="#"
-            class="flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium text-slate-500 transition-all hover:bg-slate-50 dark:text-slate-400 dark:hover:bg-slate-800"
+          </router-link>
+
+          <!-- 论坛 -->
+          <router-link 
+            to="/forum"
+            class="rounded-button flex items-center gap-2 px-4 py-2 text-sm font-medium transition-all" 
+            :class="route.path === '/forum'
+              ? 'font-bold text-blue-600 dark:text-blue-400'
+              : 'text-slate-500 hover:bg-slate-50 dark:text-slate-400 dark:hover:bg-slate-800'"
           >
             <MessageSquare :size="16" />
             论坛
-          </a>
+          </router-link>
         </nav>
       </div>
 
@@ -105,7 +135,7 @@ const containers = ref([
             type="text"
             placeholder="搜索题目ID、名称..."
             class="h-9 w-48 rounded-full border border-slate-200 bg-slate-50 pr-4 pl-9 text-sm transition-all focus:w-64 focus:border-blue-400 focus:bg-white focus:outline-none dark:border-slate-700 dark:bg-slate-800 dark:text-slate-200 dark:focus:border-blue-500 dark:focus:bg-slate-900"
-          />
+          >
         </div>
 
         <!-- 容器监控 -->
@@ -118,23 +148,21 @@ const containers = ref([
           </div>
           <template #content>
             <div
-              class="w-80 rounded-xl border bg-white p-3 shadow-xl dark:border-slate-800 dark:bg-slate-900"
+              class="rounded-select w-80 border border-slate-200 bg-white p-3 shadow-xl dark:border-slate-800 dark:bg-slate-900"
             >
               <div class="mb-2 flex items-center justify-between px-1">
                 <span
                   class="text-xs font-bold tracking-wider text-slate-500 uppercase dark:text-slate-400"
-                  >运行中的容器</span
-                >
+                >运行中的容器</span>
                 <span
                   class="rounded-full bg-blue-50 px-2 py-0.5 text-xs font-bold text-blue-600 dark:bg-blue-900/30 dark:text-blue-400"
-                  >1/3</span
-                >
+                >1/3</span>
               </div>
               <div class="space-y-2">
                 <div
                   v-for="container in containers"
                   :key="container.id"
-                  class="rounded-lg border border-slate-100 bg-slate-50 p-3 transition-colors hover:border-blue-200 dark:border-slate-700 dark:bg-slate-800 dark:hover:border-blue-800"
+                  class="rounded-inner border border-slate-100 bg-slate-50 p-3 transition-colors hover:border-blue-200 dark:border-slate-700 dark:bg-slate-800 dark:hover:border-blue-800"
                 >
                   <div class="mb-2 flex items-start justify-between">
                     <div>
@@ -153,12 +181,12 @@ const containers = ref([
                   </div>
                   <div class="flex gap-2">
                     <button
-                      class="flex flex-1 items-center justify-center gap-1 rounded border border-slate-200 bg-white py-1.5 text-xs font-bold text-slate-600 transition-colors hover:border-blue-600 hover:text-blue-600 dark:border-slate-600 dark:bg-slate-700 dark:text-slate-300 dark:hover:text-blue-400"
+                      class="rounded-button flex flex-1 items-center justify-center gap-1 border border-slate-200 bg-white py-1.5 text-xs font-bold text-slate-600 transition-colors hover:border-blue-600 hover:text-blue-600 dark:border-slate-600 dark:bg-slate-700 dark:text-slate-300 dark:hover:text-blue-400"
                     >
                       <RefreshCw :size="12" /> 续时
                     </button>
                     <button
-                      class="flex flex-1 items-center justify-center gap-1 rounded border border-slate-200 bg-white py-1.5 text-xs font-bold text-slate-600 transition-colors hover:border-red-600 hover:text-red-600 dark:border-slate-600 dark:bg-slate-700 dark:text-slate-300 dark:hover:text-red-400"
+                      class="rounded-button flex flex-1 items-center justify-center gap-1 border border-slate-200 bg-white py-1.5 text-xs font-bold text-slate-600 transition-colors hover:border-red-600 hover:text-red-600 dark:border-slate-600 dark:bg-slate-700 dark:text-slate-300 dark:hover:text-red-400"
                     >
                       <Trash2 :size="12" /> 销毁
                     </button>
@@ -184,14 +212,10 @@ const containers = ref([
         </button>
 
         <!-- 系统工具 -->
-        <button
-          class="rounded-full p-2 text-slate-400 transition-colors hover:text-blue-600 dark:hover:text-blue-400"
-        >
+        <button class="rounded-full p-2 text-slate-400 transition-colors hover:text-blue-600 dark:hover:text-blue-400">
           <Bell :size="20" />
         </button>
-        <button
-          class="rounded-full p-2 text-slate-400 transition-colors hover:text-blue-600 dark:hover:text-blue-400"
-        >
+        <button class="rounded-full p-2 text-slate-400 transition-colors hover:text-blue-600 dark:hover:text-blue-400">
           <Settings :size="20" />
         </button>
 
@@ -200,20 +224,18 @@ const containers = ref([
           <div
             class="relative h-9 w-9 cursor-pointer overflow-hidden rounded-full border border-slate-200 bg-blue-100 ring-2 ring-transparent transition-all hover:ring-blue-100 dark:border-slate-700 dark:bg-blue-900 dark:hover:ring-blue-900"
           >
-            <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Felix" alt="avatar" />
+            <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Felix" alt="avatar">
           </div>
           <template #content>
             <div
-              class="w-48 rounded-xl border bg-white py-1 shadow-xl dark:border-slate-800 dark:bg-slate-900"
+              class="rounded-select w-48 border border-slate-200 bg-white py-1 shadow-xl dark:border-slate-800 dark:bg-slate-900"
             >
               <div
-                class="flex cursor-pointer items-center justify-between rounded-t-xl px-3 py-2 hover:bg-slate-50 dark:hover:bg-slate-800"
+                class="rounded-t-select flex cursor-pointer items-center justify-between px-3 py-2 hover:bg-slate-50 dark:hover:bg-slate-800"
               >
                 <div class="flex items-center gap-2">
                   <span class="text-base">🤔</span>
-                  <span class="text-sm font-bold text-slate-700 dark:text-slate-200"
-                    >Thinking...</span
-                  >
+                  <span class="text-sm font-bold text-slate-700 dark:text-slate-200">Thinking...</span>
                 </div>
                 <button class="text-slate-400 hover:text-blue-600">
                   <Edit :size="12" />

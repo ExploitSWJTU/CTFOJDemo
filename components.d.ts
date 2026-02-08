@@ -42,6 +42,8 @@ declare module 'vue' {
     IconTag: typeof import('@arco-design/web-vue/es/icon')['IconTag']
     IconThunderbolt: typeof import('@arco-design/web-vue/es/icon')['IconThunderbolt']
     IconTrophy: typeof import('@arco-design/web-vue/es/icon')['IconTrophy']
+    RouterLink: typeof import('vue-router')['RouterLink']
+    RouterView: typeof import('vue-router')['RouterView']
     Sidebar: typeof import('./src/components/Sidebar.vue')['default']
   }
 }

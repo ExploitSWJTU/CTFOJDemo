@@ -36,7 +36,7 @@ const announcements = [
     </div>
 
     <div
-      class="relative flex h-65 flex-col overflow-hidden rounded-3xl border border-slate-800 bg-slate-900 p-5 shadow-2xl transition-colors"
+      class="rounded-card relative flex h-65 flex-col overflow-hidden border border-slate-800 bg-slate-900 p-5 shadow-2xl transition-colors"
     >
       <!-- 背景装饰 -->
       <div class="absolute top-0 right-0 h-24 w-24 bg-blue-500/10 blur-3xl" />
@@ -64,7 +64,7 @@ const announcements = [
       </div>
 
       <button
-        class="relative mt-auto w-full shrink-0 rounded-xl border border-slate-700 bg-slate-800 py-2 text-[10px] font-black text-slate-300 transition-all hover:bg-slate-700 hover:text-white"
+        class="rounded-inner relative mt-auto w-full shrink-0 border border-slate-700 bg-slate-800 py-2 text-[10px] font-black text-slate-300 transition-all hover:bg-slate-700 hover:text-white"
       >
         查看全部历史公告
       </button>

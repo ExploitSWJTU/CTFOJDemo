@@ -3,6 +3,12 @@
 @theme {
   /* 定义深色模式变体，使其支持 .dark 类选择器 */
   --variant-dark: .dark &;
+
+  /* 全局圆角管理 */
+  --radius-card: 0.6rem; /* 大卡片圆角 (3xl) */
+  --radius-inner: 0.6rem; /* 内部容器或中型卡片 (2xl) */
+  --radius-select: 0.6rem; /* 下拉框或较小容器 (xl) */
+  --radius-button: 0.3rem; /* 按钮、标签 (lg) */
 }
 
 @layer base {
