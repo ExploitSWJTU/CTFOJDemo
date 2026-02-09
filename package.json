@@ -9,10 +9,11 @@
     "preview": "vite preview",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
+    "type-check": "vue-tsc --noEmit",
     "postinstall": "simple-git-hooks || true"
   },
   "simple-git-hooks": {
-    "pre-commit": "npx lint-staged"
+    "pre-commit": "pnpm type-check && npx lint-staged"
   },
   "lint-staged": {
     "*.{js,ts,vue}": [
