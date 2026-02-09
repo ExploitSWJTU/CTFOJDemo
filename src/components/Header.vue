@@ -140,7 +140,7 @@ const containers = ref([
             type="text"
             placeholder="搜索题目ID、名称..."
             class="h-9 w-48 rounded-full border border-slate-200 bg-slate-50 pr-4 pl-9 text-sm transition-all focus:w-64 focus:border-blue-400 focus:bg-white focus:outline-none dark:border-slate-700 dark:bg-slate-800 dark:text-slate-200 dark:focus:border-blue-500 dark:focus:bg-slate-900"
-          >
+          />
         </div>
 
         <!-- 容器监控 -->
@@ -233,7 +233,7 @@ const containers = ref([
           <div
             class="relative h-9 w-9 cursor-pointer overflow-hidden rounded-full border border-slate-200 bg-blue-100 ring-2 ring-transparent transition-all hover:ring-blue-100 dark:border-slate-700 dark:bg-blue-900 dark:hover:ring-blue-900"
           >
-            <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Felix" alt="avatar">
+            <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Felix" alt="avatar" />
           </div>
           <template #content>
             <div

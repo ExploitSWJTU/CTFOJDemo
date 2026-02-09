@@ -24,7 +24,7 @@ const handleCheckIn = () => {
             <img
               src="https://images.unsplash.com/photo-1550751827-4bd374c3f58b?auto=format&fit=crop&q=80&w=1200"
               class="h-full w-full object-cover opacity-60 transition-transform duration-700 hover:scale-105"
-            >
+            />
             <div
               class="pointer-events-none absolute inset-0 flex flex-col justify-end bg-linear-to-t from-slate-900/80 to-transparent p-10"
             >

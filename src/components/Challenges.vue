@@ -45,7 +45,9 @@ const newChallenges = [
             <Globe :size="20" />
           </div>
           <div>
-            <h4 class="text-sm font-black text-slate-800 dark:text-slate-100">Web 入门</h4>
+            <h4 class="text-sm font-black text-slate-800 dark:text-slate-100">
+              Web 入门
+            </h4>
             <p
               class="text-[9px] font-black tracking-widest text-cyan-600 uppercase dark:text-cyan-400"
             >
@@ -67,8 +69,7 @@ const newChallenges = [
             </div>
             <span
               :class="`shrink-0 rounded px-1.5 py-0.5 text-[9px] font-black text-white ${c.colorClass}`"
-              >{{ c.difficulty }}</span
-            >
+            >{{ c.difficulty }}</span>
           </div>
         </div>
       </div>
@@ -87,7 +88,9 @@ const newChallenges = [
             <Zap :size="20" />
           </div>
           <div>
-            <h4 class="text-sm font-black text-slate-800 dark:text-slate-100">题目上新</h4>
+            <h4 class="text-sm font-black text-slate-800 dark:text-slate-100">
+              题目上新
+            </h4>
             <p
               class="text-[9px] font-black tracking-widest text-indigo-600 uppercase dark:text-indigo-400"
             >
@@ -109,8 +112,7 @@ const newChallenges = [
             </div>
             <span
               :class="`shrink-0 rounded px-1.5 py-0.5 text-[9px] font-black text-white uppercase ${c.colorClass}`"
-              >{{ c.difficulty }}</span
-            >
+            >{{ c.difficulty }}</span>
           </div>
         </div>
       </div>
@@ -127,24 +129,30 @@ const newChallenges = [
             <div class="h-2 w-2 animate-ping rounded-full bg-red-400" />
             <span class="text-[10px] font-black tracking-widest uppercase">正在进行</span>
           </div>
-          <span class="rounded-full bg-white/20 px-2 py-0.5 font-mono text-[10px]"
-            >#2026-Rookie</span
-          >
+          <span class="rounded-full bg-white/20 px-2 py-0.5 font-mono text-[10px]">#2026-Rookie</span>
         </div>
 
-        <h4 class="mb-4 text-lg leading-tight font-black">SWJTU Rookie CTF Game 2026</h4>
+        <h4 class="mb-4 text-lg leading-tight font-black">
+          SWJTU Rookie CTF Game 2026
+        </h4>
 
         <div class="flex-1 space-y-4">
           <div class="flex items-end justify-between">
             <div>
-              <p class="text-[10px] font-bold text-blue-200 uppercase">当前排名</p>
+              <p class="text-[10px] font-bold text-blue-200 uppercase">
+                当前排名
+              </p>
               <p class="text-2xl font-black italic">
                 #27 <span class="text-xs font-normal opacity-60">/ 78</span>
               </p>
             </div>
             <div class="text-right">
-              <p class="text-[10px] font-bold text-blue-200 uppercase">剩余时间</p>
-              <p class="font-mono text-sm font-bold">92天 17时 00分</p>
+              <p class="text-[10px] font-bold text-blue-200 uppercase">
+                剩余时间
+              </p>
+              <p class="font-mono text-sm font-bold">
+                92天 17时 00分
+              </p>
             </div>
           </div>
           <div class="space-y-1.5">
