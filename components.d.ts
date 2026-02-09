@@ -21,6 +21,7 @@ declare module 'vue' {
     Banner: typeof import('./src/components/Banner.vue')['default']
     ChallengeCard: typeof import('./src/components/ChallengeCard.vue')['default']
     Challenges: typeof import('./src/components/Challenges.vue')['default']
+    CheckIn: typeof import('./src/components/CheckIn.vue')['default']
     Header: typeof import('./src/components/Header.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']

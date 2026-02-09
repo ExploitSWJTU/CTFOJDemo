@@ -27,6 +27,19 @@ const feeds = [
     avatars: ['A', 'B'],
   },
   {
+    id: 3,
+    type: 'discussion',
+    icon: MessageSquare,
+    iconColor: 'text-purple-500',
+    iconBg: 'bg-white',
+    user: 'YYM',
+    action: '发起讨论',
+    time: '8 小时前',
+    title: '楼上是给',
+    tags: ['#给'],
+    stats: [{ icon: MessageSquare, text: '15 条评论', type: 'btn' }],
+  },
+  {
     id: 2,
     type: 'writeup',
     icon: BookOpen,
@@ -42,24 +55,11 @@ const feeds = [
       { icon: MessageSquare, text: '8', type: 'btn' },
     ],
   },
-  {
-    id: 3,
-    type: 'discussion',
-    icon: MessageSquare,
-    iconColor: 'text-purple-500',
-    iconBg: 'bg-white',
-    user: 'YYM',
-    action: '发起讨论',
-    time: '8 小时前',
-    title: '楼上是给',
-    tags: ['#给'],
-    stats: [{ icon: MessageSquare, text: '15 条评论', type: 'btn' }],
-  },
 ];
 </script>
 
 <template>
-  <div class="col-span-3">
+  <div>
     <h3
       class="mb-6 flex items-center gap-2 px-2 text-lg font-bold text-slate-800 dark:text-slate-100"
     >
