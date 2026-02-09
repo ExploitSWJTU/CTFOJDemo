@@ -84,7 +84,8 @@ const colorMap: Record<string, string> = {
 
 const getCategoryClass = (cat: (typeof categories)[0]) => {
   const active = selectedCategory.value === cat.label;
-  const colors = colorMap[cat.color].split(' ');
+  const colorCfg = colorMap[cat.color] ?? 'bg-blue-600 shadow-blue-200 text-blue-600 hover:bg-blue-50 dark:shadow-none dark:hover:bg-blue-900/20';
+  const colors = colorCfg.split(' ');
 
   if (active) {
     return `${colors[0]} ${colors[1]} text-white`;
@@ -188,9 +189,7 @@ const renderedDescription = computed(() => {
           :key="cat.label"
           class="group relative flex h-10 items-center rounded-xl font-medium transition-all"
           :class="[
-            selectedCategory === cat.label
-              ? 'bg-blue-600 text-white shadow-lg shadow-blue-200 dark:shadow-none'
-              : 'text-slate-500 hover:bg-slate-100 hover:text-slate-900 dark:text-slate-400 dark:hover:bg-slate-800 dark:hover:text-slate-100',
+            getCategoryClass(cat),
             isSidebarCollapsed ? 'mx-auto w-10 justify-center' : 'w-full gap-3 px-3',
           ]"
           @click="selectedCategory = cat.label"

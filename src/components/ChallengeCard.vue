@@ -101,7 +101,8 @@ const difficultyColor = computed(() => {
       <!-- 头部：图标 + 标题 -->
       <div class="mb-4 flex items-start gap-3">
         <div
-          class="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-blue-50 text-blue-600 dark:bg-blue-900/20 dark:text-blue-400"
+          class="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg"
+          :class="categoryColor"
         >
           <component :is="categoryIcon" :size="20" />
         </div>
