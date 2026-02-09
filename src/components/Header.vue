@@ -77,9 +77,10 @@ const containers = ref([
           <router-link
             to="/"
             class="rounded-button flex h-9 w-9 items-center justify-center transition-all"
-            :class="route.path === '/'
-              ? 'bg-blue-600 text-white shadow-md shadow-blue-200 dark:shadow-none'
-              : 'text-slate-500 hover:bg-slate-50 dark:text-slate-400 dark:hover:bg-slate-800'
+            :class="
+              route.path === '/'
+                ? 'bg-blue-600 text-white shadow-md shadow-blue-200 dark:shadow-none'
+                : 'text-slate-500 hover:bg-slate-50 dark:text-slate-400 dark:hover:bg-slate-800'
             "
           >
             <Home :size="18" />
@@ -89,9 +90,10 @@ const containers = ref([
           <router-link
             to="/training"
             class="rounded-button flex items-center gap-2 px-4 py-2 text-sm font-medium transition-all"
-            :class="route.path === '/training'
-              ? 'font-bold text-blue-600 dark:text-blue-400'
-              : 'text-slate-500 hover:bg-slate-50 dark:text-slate-400 dark:hover:bg-slate-800'
+            :class="
+              route.path === '/training'
+                ? 'font-bold text-blue-600 dark:text-blue-400'
+                : 'text-slate-500 hover:bg-slate-50 dark:text-slate-400 dark:hover:bg-slate-800'
             "
           >
             <Swords :size="16" />
@@ -102,9 +104,10 @@ const containers = ref([
           <router-link
             to="/contest"
             class="rounded-button flex items-center gap-2 px-4 py-2 text-sm font-medium transition-all"
-            :class="route.path === '/contest'
-              ? 'font-bold text-blue-600 dark:text-blue-400'
-              : 'text-slate-500 hover:bg-slate-50 dark:text-slate-400 dark:hover:bg-slate-800'
+            :class="
+              route.path === '/contest'
+                ? 'font-bold text-blue-600 dark:text-blue-400'
+                : 'text-slate-500 hover:bg-slate-50 dark:text-slate-400 dark:hover:bg-slate-800'
             "
           >
             <Flag :size="16" />
@@ -112,12 +115,14 @@ const containers = ref([
           </router-link>
 
           <!-- 论坛 -->
-          <router-link 
+          <router-link
             to="/forum"
-            class="rounded-button flex items-center gap-2 px-4 py-2 text-sm font-medium transition-all" 
-            :class="route.path === '/forum'
-              ? 'font-bold text-blue-600 dark:text-blue-400'
-              : 'text-slate-500 hover:bg-slate-50 dark:text-slate-400 dark:hover:bg-slate-800'"
+            class="rounded-button flex items-center gap-2 px-4 py-2 text-sm font-medium transition-all"
+            :class="
+              route.path === '/forum'
+                ? 'font-bold text-blue-600 dark:text-blue-400'
+                : 'text-slate-500 hover:bg-slate-50 dark:text-slate-400 dark:hover:bg-slate-800'
+            "
           >
             <MessageSquare :size="16" />
             论坛
@@ -212,10 +217,14 @@ const containers = ref([
         </button>
 
         <!-- 系统工具 -->
-        <button class="rounded-full p-2 text-slate-400 transition-colors hover:text-blue-600 dark:hover:text-blue-400">
+        <button
+          class="rounded-full p-2 text-slate-400 transition-colors hover:text-blue-600 dark:hover:text-blue-400"
+        >
           <Bell :size="20" />
         </button>
-        <button class="rounded-full p-2 text-slate-400 transition-colors hover:text-blue-600 dark:hover:text-blue-400">
+        <button
+          class="rounded-full p-2 text-slate-400 transition-colors hover:text-blue-600 dark:hover:text-blue-400"
+        >
           <Settings :size="20" />
         </button>
 
