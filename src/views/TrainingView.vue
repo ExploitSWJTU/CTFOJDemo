@@ -10,7 +10,19 @@ import {
   RefreshCw,
   Send,
   Loader2,
+  ChevronLeft,
+  ChevronRight,
+  Shield,
+  Smartphone,
+  SearchCode,
+  Image as ImageIcon,
+  Cpu,
+  Brain,
+  Terminal,
+  Binary,
+  FileQuestion,
 } from 'lucide-vue-next';
+import type { Component } from 'vue';
 import MarkdownIt from 'markdown-it';
 import { challenges as mockChallenges } from '../mock/challenges';
 import type { Challenge, Category, Difficulty } from '../types/challenge';
@@ -33,10 +45,52 @@ const detailVisible = ref(false);
 const currentChallenge = ref<Challenge | null>(null);
 const flagInput = ref('');
 const submitting = ref(false);
+const isSidebarCollapsed = ref(false);
 
 // Constants
-const categories: (Category | 'All')[] = ['All', 'Web', 'Pwn', 'Crypto', 'Misc'];
+const categories: { label: Category | 'All'; icon: Component; color: string }[] = [
+  { label: 'All', icon: Shield, color: 'blue' },
+  { label: 'Web', icon: SearchCode, color: 'sky' },
+  { label: 'Pwn', icon: Terminal, color: 'red' },
+  { label: 'Reverse', icon: Cpu, color: 'purple' },
+  { label: 'Crypto', icon: Binary, color: 'orange' },
+  { label: 'Mobile', icon: Smartphone, color: 'green' },
+  { label: 'Misc', icon: FileQuestion, color: 'slate' },
+  { label: 'Stego', icon: ImageIcon, color: 'pink' },
+  { label: 'Blockchain', icon: Binary, color: 'yellow' },
+  { label: 'AI', icon: Brain, color: 'indigo' },
+];
 const difficulties: (Difficulty | 'All')[] = ['All', 'Easy', 'Medium', 'Hard'];
+
+// Color Mapping for Dynamic Tailwind Classes
+const colorMap: Record<string, string> = {
+  blue: 'bg-blue-600 shadow-blue-200 text-blue-600 hover:bg-blue-50 dark:shadow-none dark:hover:bg-blue-900/20',
+  sky: 'bg-sky-600 shadow-sky-200 text-sky-600 hover:bg-sky-50 dark:shadow-none dark:hover:bg-sky-900/20',
+  red: 'bg-red-600 shadow-red-200 text-red-600 hover:bg-red-50 dark:shadow-none dark:hover:bg-red-900/20',
+  purple:
+    'bg-purple-600 shadow-purple-200 text-purple-600 hover:bg-purple-50 dark:shadow-none dark:hover:bg-purple-900/20',
+  orange:
+    'bg-orange-600 shadow-orange-200 text-orange-600 hover:bg-orange-50 dark:shadow-none dark:hover:bg-orange-900/20',
+  green:
+    'bg-green-600 shadow-green-200 text-green-600 hover:bg-green-50 dark:shadow-none dark:hover:bg-green-900/20',
+  slate:
+    'bg-slate-600 shadow-slate-200 text-slate-600 hover:bg-slate-50 dark:shadow-none dark:hover:bg-slate-900/20',
+  pink: 'bg-pink-600 shadow-pink-200 text-pink-600 hover:bg-pink-50 dark:shadow-none dark:hover:bg-pink-900/20',
+  yellow:
+    'bg-yellow-600 shadow-yellow-200 text-yellow-600 hover:bg-yellow-50 dark:shadow-none dark:hover:bg-yellow-900/20',
+  indigo:
+    'bg-indigo-600 shadow-indigo-200 text-indigo-600 hover:bg-indigo-50 dark:shadow-none dark:hover:bg-indigo-900/20',
+};
+
+const getCategoryClass = (cat: (typeof categories)[0]) => {
+  const active = selectedCategory.value === cat.label;
+  const colors = colorMap[cat.color].split(' ');
+
+  if (active) {
+    return `${colors[0]} ${colors[1]} text-white`;
+  }
+  return `${colors[2]} ${colors[3]} ${colors[4]}`;
+};
 
 // Filtering
 const filteredChallenges = computed(() => {
@@ -113,27 +167,42 @@ const renderedDescription = computed(() => {
 <template>
   <div class="flex min-h-[calc(100vh-64px)] gap-6">
     <!-- Left Sidebar -->
-    <aside class="hidden w-16 shrink-0 flex-col gap-4 lg:flex">
+    <aside
+      class="hidden shrink-0 flex-col gap-4 transition-all duration-300 lg:flex"
+      :class="isSidebarCollapsed ? 'w-16' : 'w-48'"
+    >
       <div
         class="sticky top-24 flex flex-col gap-2 rounded-2xl bg-white p-2 shadow-sm dark:bg-slate-900"
       >
+        <!-- Toggle Button -->
+        <button
+          class="mb-2 flex h-10 w-full items-center justify-center rounded-xl text-slate-400 hover:bg-slate-100 hover:text-slate-900 dark:hover:bg-slate-800 dark:hover:text-slate-100"
+          @click="isSidebarCollapsed = !isSidebarCollapsed"
+        >
+          <ChevronLeft v-if="!isSidebarCollapsed" :size="20" />
+          <ChevronRight v-else :size="20" />
+        </button>
+
         <button
           v-for="cat in categories"
-          :key="cat"
-          class="group relative flex h-10 w-10 items-center justify-center rounded-xl font-medium transition-all"
-          :class="
-            selectedCategory === cat
+          :key="cat.label"
+          class="group relative flex h-10 items-center rounded-xl font-medium transition-all"
+          :class="[
+            selectedCategory === cat.label
               ? 'bg-blue-600 text-white shadow-lg shadow-blue-200 dark:shadow-none'
-              : 'text-slate-500 hover:bg-slate-100 hover:text-slate-900 dark:text-slate-400 dark:hover:bg-slate-800 dark:hover:text-slate-100'
-          "
-          @click="selectedCategory = cat"
+              : 'text-slate-500 hover:bg-slate-100 hover:text-slate-900 dark:text-slate-400 dark:hover:bg-slate-800 dark:hover:text-slate-100',
+            isSidebarCollapsed ? 'mx-auto w-10 justify-center' : 'w-full gap-3 px-3',
+          ]"
+          @click="selectedCategory = cat.label"
         >
-          <span class="text-xs font-bold">{{ cat === 'All' ? 'All' : cat[0] }}</span>
-          <!-- Tooltip -->
+          <component :is="cat.icon" :size="20" />
+          <span v-if="!isSidebarCollapsed" class="truncate text-sm font-bold">{{ cat.label }}</span>
+          <!-- Tooltip (only when collapsed) -->
           <span
+            v-if="isSidebarCollapsed"
             class="absolute left-14 z-50 rounded bg-slate-800 px-2 py-1 text-xs whitespace-nowrap text-white opacity-0 transition-opacity group-hover:opacity-100"
           >
-            {{ cat }}
+            {{ cat.label }}
           </span>
         </button>
       </div>

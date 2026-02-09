@@ -1,5 +1,14 @@
 export type Difficulty = 'Easy' | 'Medium' | 'Hard';
-export type Category = 'Web' | 'Pwn' | 'Crypto' | 'Misc';
+export type Category =
+  | 'Web'
+  | 'Pwn'
+  | 'Crypto'
+  | 'Misc'
+  | 'Reverse'
+  | 'Mobile'
+  | 'Stego'
+  | 'Blockchain'
+  | 'AI';
 export type Status = 'solved' | 'unsolved';
 export type ContainerState = 'idle' | 'loading' | 'running';
 

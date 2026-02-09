@@ -1,6 +1,18 @@
 <script setup lang="ts">
 import { computed } from 'vue';
-import { Globe, Terminal, Binary, FileQuestion, User, Trophy, Eye } from 'lucide-vue-next';
+import {
+  Globe,
+  Terminal,
+  Binary,
+  FileQuestion,
+  User,
+  Trophy,
+  Eye,
+  Cpu,
+  Smartphone,
+  ImageIcon,
+  Brain,
+} from 'lucide-vue-next';
 import type { Challenge } from '../types/challenge';
 
 const props = defineProps<{
@@ -21,8 +33,41 @@ const categoryIcon = computed(() => {
       return Binary;
     case 'Misc':
       return FileQuestion;
+    case 'Reverse':
+      return Cpu;
+    case 'Mobile':
+      return Smartphone;
+    case 'Stego':
+      return ImageIcon;
+    case 'Blockchain':
+      return Binary;
+    case 'AI':
+      return Brain;
     default:
       return FileQuestion;
+  }
+});
+
+const categoryColor = computed(() => {
+  switch (props.challenge.category) {
+    case 'Web':
+      return 'text-blue-600 bg-blue-50 dark:text-blue-400 dark:bg-blue-900/20';
+    case 'Pwn':
+      return 'text-red-600 bg-red-50 dark:text-red-400 dark:bg-red-900/20';
+    case 'Reverse':
+      return 'text-purple-600 bg-purple-50 dark:text-purple-400 dark:bg-purple-900/20';
+    case 'Crypto':
+      return 'text-green-600 bg-green-50 dark:text-green-400 dark:bg-green-900/20';
+    case 'Mobile':
+      return 'text-orange-600 bg-orange-50 dark:text-orange-400 dark:bg-orange-900/20';
+    case 'Stego':
+      return 'text-pink-600 bg-pink-50 dark:text-pink-400 dark:bg-pink-900/20';
+    case 'Blockchain':
+      return 'text-indigo-600 bg-indigo-50 dark:text-indigo-400 dark:bg-indigo-900/20';
+    case 'AI':
+      return 'text-teal-600 bg-teal-50 dark:text-teal-400 dark:bg-teal-900/20';
+    default:
+      return 'text-slate-600 bg-slate-50 dark:text-slate-400 dark:bg-slate-900/20';
   }
 });
 
