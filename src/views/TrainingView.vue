@@ -12,21 +12,12 @@ import {
   Loader2,
   ChevronLeft,
   ChevronRight,
-  Shield,
-  Smartphone,
-  SearchCode,
-  Image as ImageIcon,
-  Cpu,
-  Brain,
-  Terminal,
-  Binary,
-  FileQuestion,
 } from 'lucide-vue-next';
-import type { Component } from 'vue';
 import MarkdownIt from 'markdown-it';
 import { challenges as mockChallenges } from '../mock/challenges';
 import type { Challenge, Category, Difficulty } from '../types/challenge';
 import ChallengeCard from '../components/ChallengeCard.vue';
+import { CATEGORIES, CATEGORY_MAP } from '../constants/category';
 
 // Initialize Markdown parser
 const md = new MarkdownIt({
@@ -47,55 +38,18 @@ const flagInput = ref('');
 const submitting = ref(false);
 const isSidebarCollapsed = ref(false);
 
-// Constants
-const categories: { label: Category | 'All'; icon: Component; color: string }[] = [
-  { label: 'All', icon: Shield, color: 'blue' },
-  { label: 'Web', icon: SearchCode, color: 'sky' },
-  { label: 'Pwn', icon: Terminal, color: 'red' },
-  { label: 'Reverse', icon: Cpu, color: 'purple' },
-  { label: 'Crypto', icon: Binary, color: 'orange' },
-  { label: 'Mobile', icon: Smartphone, color: 'green' },
-  { label: 'Misc', icon: FileQuestion, color: 'slate' },
-  { label: 'Stego', icon: ImageIcon, color: 'pink' },
-  { label: 'Blockchain', icon: Binary, color: 'yellow' },
-  { label: 'AI', icon: Brain, color: 'indigo' },
-];
 const difficulties: (Difficulty | 'All')[] = ['All', 'Easy', 'Medium', 'Hard'];
 
-// Color Mapping for Dynamic Tailwind Classes
-const colorMap: Record<string, string> = {
-  blue: 'bg-blue-600 shadow-blue-200 text-blue-600 hover:bg-blue-50 dark:shadow-none dark:hover:bg-blue-900/20',
-  sky: 'bg-sky-600 shadow-sky-200 text-sky-600 hover:bg-sky-50 dark:shadow-none dark:hover:bg-sky-900/20',
-  red: 'bg-red-600 shadow-red-200 text-red-600 hover:bg-red-50 dark:shadow-none dark:hover:bg-red-900/20',
-  purple:
-    'bg-purple-600 shadow-purple-200 text-purple-600 hover:bg-purple-50 dark:shadow-none dark:hover:bg-purple-900/20',
-  orange:
-    'bg-orange-600 shadow-orange-200 text-orange-600 hover:bg-orange-50 dark:shadow-none dark:hover:bg-orange-900/20',
-  green:
-    'bg-green-600 shadow-green-200 text-green-600 hover:bg-green-50 dark:shadow-none dark:hover:bg-green-900/20',
-  slate:
-    'bg-slate-600 shadow-slate-200 text-slate-600 hover:bg-slate-50 dark:shadow-none dark:hover:bg-slate-900/20',
-  pink: 'bg-pink-600 shadow-pink-200 text-pink-600 hover:bg-pink-50 dark:shadow-none dark:hover:bg-pink-900/20',
-  yellow:
-    'bg-yellow-600 shadow-yellow-200 text-yellow-600 hover:bg-yellow-50 dark:shadow-none dark:hover:bg-yellow-900/20',
-  indigo:
-    'bg-indigo-600 shadow-indigo-200 text-indigo-600 hover:bg-indigo-50 dark:shadow-none dark:hover:bg-indigo-900/20',
-};
-
-const getCategoryClass = (cat: (typeof categories)[0]) => {
+const getCategoryClass = (cat: (typeof CATEGORIES)[0]) => {
   const active = selectedCategory.value === cat.label;
-  const colorCfg = colorMap[cat.color] ?? 'bg-blue-600 shadow-blue-200 text-blue-600 hover:bg-blue-50 dark:shadow-none dark:hover:bg-blue-900/20';
-  const colors = colorCfg.split(' ');
-
-  if (active) {
-    return `${colors[0]} ${colors[1]} text-white`;
-  }
-  return `${colors[2]} ${colors[3]} ${colors[4]}`;
+  const cfg = CATEGORY_MAP[cat.label].sidebar;
+  return active ? cfg.active : cfg.inactive;
 };
 
-// Filtering
+// Filtering and Sorting
 const filteredChallenges = computed(() => {
-  return challenges.value.filter((c) => {
+  // 1. First, apply filters
+  const result = challenges.value.filter((c) => {
     const matchCategory = selectedCategory.value === 'All' || c.category === selectedCategory.value;
     const matchSearch =
       c.title.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
@@ -105,6 +59,24 @@ const filteredChallenges = computed(() => {
     const matchSolved = hideSolved.value ? c.status !== 'solved' : true;
 
     return matchCategory && matchSearch && matchDifficulty && matchSolved;
+  });
+
+  // 2. Then, apply sorting
+  const categoryOrder = CATEGORIES.map((cat) => cat.label);
+  const difficultyMap: Record<Difficulty, number> = {
+    Easy: 1,
+    Medium: 2,
+    Hard: 3,
+  };
+
+  return result.sort((a, b) => {
+    // Primary sort: Category
+    const catA = categoryOrder.indexOf(a.category);
+    const catB = categoryOrder.indexOf(b.category);
+    if (catA !== catB) return catA - catB;
+
+    // Secondary sort: Difficulty
+    return difficultyMap[a.difficulty] - difficultyMap[b.difficulty];
   });
 });
 
@@ -174,6 +146,7 @@ const renderedDescription = computed(() => {
     >
       <div
         class="sticky top-24 flex flex-col gap-2 rounded-2xl bg-white p-2 shadow-sm dark:bg-slate-900"
+        :class="{ 'items-center': isSidebarCollapsed }"
       >
         <!-- Toggle Button -->
         <button
@@ -185,7 +158,7 @@ const renderedDescription = computed(() => {
         </button>
 
         <button
-          v-for="cat in categories"
+          v-for="cat in CATEGORIES"
           :key="cat.label"
           class="group relative flex h-10 items-center rounded-xl font-medium transition-all"
           :class="[
@@ -216,7 +189,7 @@ const renderedDescription = computed(() => {
         <div
           class="flex flex-wrap items-center justify-between gap-4 rounded-2xl bg-white p-4 shadow-sm dark:bg-slate-900"
         >
-          <div class="flex min-w-[200px] flex-1 items-center gap-4">
+          <div class="flex min-w-50 flex-1 items-center gap-4">
             <div class="relative max-w-md flex-1">
               <Search class="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-slate-400" />
               <input

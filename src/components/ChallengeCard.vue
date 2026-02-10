@@ -1,19 +1,8 @@
 <script setup lang="ts">
 import { computed } from 'vue';
-import {
-  Globe,
-  Terminal,
-  Binary,
-  FileQuestion,
-  User,
-  Trophy,
-  Eye,
-  Cpu,
-  Smartphone,
-  ImageIcon,
-  Brain,
-} from 'lucide-vue-next';
+import { User, Trophy, Eye, CircleCheckBig } from 'lucide-vue-next';
 import type { Challenge } from '../types/challenge';
+import { CATEGORY_MAP } from '../constants/category';
 
 const props = defineProps<{
   challenge: Challenge;
@@ -23,53 +12,12 @@ const emit = defineEmits<{
   (e: 'view-details', id: number): void;
 }>();
 
-const categoryIcon = computed(() => {
-  switch (props.challenge.category) {
-    case 'Web':
-      return Globe;
-    case 'Pwn':
-      return Terminal;
-    case 'Crypto':
-      return Binary;
-    case 'Misc':
-      return FileQuestion;
-    case 'Reverse':
-      return Cpu;
-    case 'Mobile':
-      return Smartphone;
-    case 'Stego':
-      return ImageIcon;
-    case 'Blockchain':
-      return Binary;
-    case 'AI':
-      return Brain;
-    default:
-      return FileQuestion;
-  }
+const categoryMeta = computed(() => {
+  return CATEGORY_MAP[props.challenge.category] || CATEGORY_MAP.Misc;
 });
 
-const categoryColor = computed(() => {
-  switch (props.challenge.category) {
-    case 'Web':
-      return 'text-blue-600 bg-blue-50 dark:text-blue-400 dark:bg-blue-900/20';
-    case 'Pwn':
-      return 'text-red-600 bg-red-50 dark:text-red-400 dark:bg-red-900/20';
-    case 'Reverse':
-      return 'text-purple-600 bg-purple-50 dark:text-purple-400 dark:bg-purple-900/20';
-    case 'Crypto':
-      return 'text-green-600 bg-green-50 dark:text-green-400 dark:bg-green-900/20';
-    case 'Mobile':
-      return 'text-orange-600 bg-orange-50 dark:text-orange-400 dark:bg-orange-900/20';
-    case 'Stego':
-      return 'text-pink-600 bg-pink-50 dark:text-pink-400 dark:bg-pink-900/20';
-    case 'Blockchain':
-      return 'text-indigo-600 bg-indigo-50 dark:text-indigo-400 dark:bg-indigo-900/20';
-    case 'AI':
-      return 'text-teal-600 bg-teal-50 dark:text-teal-400 dark:bg-teal-900/20';
-    default:
-      return 'text-slate-600 bg-slate-50 dark:text-slate-400 dark:bg-slate-900/20';
-  }
-});
+const categoryIcon = computed(() => categoryMeta.value.icon);
+const categoryColor = computed(() => categoryMeta.value.cardClass);
 
 const difficultyColor = computed(() => {
   switch (props.challenge.difficulty) {
@@ -88,13 +36,14 @@ const difficultyColor = computed(() => {
 <template>
   <div
     class="group relative flex h-full flex-col overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-xl dark:border-slate-800 dark:bg-slate-900 dark:shadow-none"
+    :class="{ 'opacity-50 grayscale-[0.6]': challenge.status === 'solved' }"
   >
-    <!-- 状态标签 -->
+    <!-- 状态标签 (新版：大图标溢出) -->
     <div
       v-if="challenge.status === 'solved'"
-      class="absolute top-0 right-0 z-10 rounded-bl-xl bg-green-500 px-3 py-1 text-xs font-bold text-white shadow-sm"
+      class="pointer-events-none absolute -top-4 -right-4 z-0 h-2/3 opacity-75 transition-transform duration-500 group-hover:scale-110"
     >
-      已解出
+      <CircleCheckBig class="h-full w-auto text-green-500" :stroke-width="1.8" />
     </div>
 
     <div class="p-5">
@@ -138,7 +87,7 @@ const difficultyColor = computed(() => {
 
     <!-- 悬停遮罩层 -->
     <div
-      class="absolute inset-0 flex items-center justify-center bg-white/80 opacity-0 backdrop-blur-sm transition-opacity duration-300 group-hover:opacity-100 dark:bg-slate-900/80"
+      class="absolute inset-0 z-20 flex items-center justify-center rounded-xl bg-white/80 opacity-0 backdrop-blur-sm transition-opacity duration-300 group-hover:opacity-100 dark:bg-slate-900/80"
     >
       <button
         class="rounded-full bg-blue-600 px-6 py-2 text-sm font-bold text-white shadow-lg shadow-blue-200 transition-transform duration-300 hover:scale-105 hover:bg-blue-700 dark:shadow-none dark:hover:bg-blue-500"

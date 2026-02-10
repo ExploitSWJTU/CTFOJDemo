@@ -6,7 +6,6 @@ export type Category =
   | 'Misc'
   | 'Reverse'
   | 'Mobile'
-  | 'Stego'
   | 'Blockchain'
   | 'AI';
 export type Status = 'solved' | 'unsolved';
