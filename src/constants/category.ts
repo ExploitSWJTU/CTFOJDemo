@@ -6,7 +6,6 @@ import {
   ChevronsLeft,
   Smartphone,
   Brain,
-  SearchCode,
   Shield,
 } from 'lucide-vue-next';
 import type { Component } from 'vue';
