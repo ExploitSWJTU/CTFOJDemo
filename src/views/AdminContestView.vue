@@ -1,20 +1,20 @@
 <script setup lang="ts">
 import { ref, computed, watch, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import { Search } from 'lucide-vue-next'
-import { contestStore, type ContestStatus } from '../stores/contestStore'
+import { Search, Plus, Edit, Trash2 } from 'lucide-vue-next'
+import { contestStore, type ContestStatus, type ContestType, type Contest } from '../stores/contestStore'
 
 const route = useRoute()
 const router = useRouter()
+
+// 使用共享的比赛数据
+const allContests = computed(() => contestStore.contests)
 
 const statusLabel: Record<ContestStatus, string> = {
   ongoing: '进行中',
   upcoming: '未开始',
   finished: '已结束',
 }
-
-// 使用共享的比赛数据
-const allContests = computed(() => contestStore.contests)
 
 // 历史参赛记录
 interface ContestHistory {
@@ -122,9 +122,27 @@ onMounted(() => {
   }
 })
 
-// 跳转到赛事详情
+// 跳转到赛事详情（管理员版）
 const goToContestDetail = (id: number) => {
-  router.push({ name: 'contestDetail', params: { id } })
+  router.push({ name: 'adminContestDetail', params: { id } })
+}
+
+// 新建比赛
+const createContest = () => {
+  router.push({ name: 'adminContestCreate' })
+}
+
+// 编辑比赛
+const editContest = (id: number) => {
+  router.push({ name: 'adminContestEdit', params: { id } })
+}
+
+// 删除比赛
+const deleteContest = (id: number) => {
+  // TODO: 实现删除比赛功能
+  if (confirm('确定要删除这个比赛吗？')) {
+    alert(`删除比赛 ${id}`)
+  }
 }
 </script>
 
@@ -191,6 +209,16 @@ const goToContestDetail = (id: number) => {
                 </option>
               </select>
             </div>
+
+            <!-- 新建比赛按钮 -->
+            <button
+              type="button"
+              class="inline-flex items-center gap-2 rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white transition hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 dark:focus:ring-offset-slate-950"
+              @click="createContest"
+            >
+              <Plus class="h-4 w-4" />
+              新建比赛
+            </button>
           </div>
         </div>
 
@@ -285,7 +313,28 @@ const goToContestDetail = (id: number) => {
                 </div>
               </div>
             </header>
-            <div class="-mt-13 flex justify-end">
+            <div class="-mt-13 flex items-center justify-end gap-2">
+              <!-- 编辑按钮 -->
+              <button
+                type="button"
+                class="inline-flex h-8 items-center justify-center gap-1.5 whitespace-nowrap rounded-lg border border-slate-300 bg-white px-3 text-sm font-medium text-slate-700 transition hover:bg-slate-50 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-200 dark:hover:bg-slate-700"
+                @click="editContest(contest.id)"
+              >
+                <Edit class="h-3.5 w-3.5" />
+                编辑
+              </button>
+
+              <!-- 删除按钮 -->
+              <button
+                type="button"
+                class="inline-flex h-8 items-center justify-center gap-1.5 whitespace-nowrap rounded-lg border border-red-300 bg-white px-3 text-sm font-medium text-red-600 transition hover:bg-red-50 dark:border-red-700 dark:bg-slate-800 dark:text-red-400 dark:hover:bg-red-900/20"
+                @click="deleteContest(contest.id)"
+              >
+                <Trash2 class="h-3.5 w-3.5" />
+                删除
+              </button>
+
+              <!-- 查看详情按钮 -->
               <button
                 type="button"
                 class="inline-flex h-8 items-center justify-center whitespace-nowrap rounded-lg px-4 text-sm font-medium text-white transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-slate-950"
@@ -395,3 +444,4 @@ const goToContestDetail = (id: number) => {
     </div>
   </div>
 </template>
+

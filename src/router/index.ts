@@ -20,9 +20,34 @@ const router = createRouter({
       component: () => import('../views/ContestView.vue'),
     },
     {
+      path: '/contest/:id',
+      name: 'contestDetail',
+      component: () => import('../views/ContestDetailView.vue'),
+    },
+    {
       path: '/forum',
       name: 'forum',
       component: () => import('../views/ForumView.vue'),
+    },
+    {
+      path: '/admin/contest',
+      name: 'adminContest',
+      component: () => import('../views/AdminContestView.vue'),
+    },
+    {
+      path: '/admin/contest/:id',
+      name: 'adminContestDetail',
+      component: () => import('../views/ContestDetailView.vue'),
+    },
+    {
+      path: '/admin/contest/edit/:id',
+      name: 'adminContestEdit',
+      component: () => import('../views/AdminContestEditView.vue'),
+    },
+    {
+      path: '/admin/contest/create',
+      name: 'adminContestCreate',
+      component: () => import('../views/AdminContestCreateView.vue'),
     },
   ],
 });
