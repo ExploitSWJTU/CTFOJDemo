@@ -1,7 +1,9 @@
 <script setup lang="ts">
-import { ref, computed } from 'vue'
-import { useRoute } from 'vue-router'
-import MarkdownIt from 'markdown-it'
+import { ref, computed, onMounted, watch, nextTick } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
+import { ArrowLeft } from 'lucide-vue-next'
+import Vditor from 'vditor'
+import 'vditor/dist/index.css'
 import { contestStore, type ContestStatus } from '../stores/contestStore'
 
 const statusLabel: Record<ContestStatus, string> = {
@@ -11,11 +13,7 @@ const statusLabel: Record<ContestStatus, string> = {
 }
 
 const route = useRoute()
-const md = new MarkdownIt({
-  html: true,
-  linkify: true,
-  typographer: true,
-})
+const router = useRouter()
 
 const contestId = computed(() => Number(route.params.id))
 const contest = computed(() => contestStore.contests.find((c) => c.id === contestId.value))
@@ -45,11 +43,70 @@ const buttonText = computed(() => {
   return '报名'
 })
 
-const renderedDescription = computed(() => {
-  if (!contest.value) return ''
-  // 如果 description 是纯文本，也能正常渲染
-  return md.render(contest.value.description || '')
+// Markdown 预览容器
+const previewContainer = ref<HTMLDivElement | null>(null)
+
+// 检测暗色模式
+const isDarkMode = computed(() => {
+  return document.documentElement.classList.contains('dark')
 })
+
+// 渲染 Markdown
+const renderMarkdown = async () => {
+  await nextTick()
+  if (!previewContainer.value || !contest.value) return
+
+  const markdown = contest.value.description || ''
+  if (!markdown) {
+    previewContainer.value.innerHTML = '<p class="text-slate-400 dark:text-slate-500">暂无赛事介绍</p>'
+    return
+  }
+
+  // 清空容器
+  previewContainer.value.innerHTML = ''
+
+  // 使用 Vditor 的预览功能渲染 Markdown
+  // Vditor.preview(element, markdown, options)
+  try {
+    Vditor.preview(previewContainer.value, markdown, {
+      mode: 'light',
+      theme: isDarkMode.value ? 'dark' : 'classic',
+      anchor: 1, // 显示标题锚点
+      speech: {
+        enable: false,
+      },
+    })
+  } catch (error) {
+    console.error('Vditor preview error:', error)
+    // 如果 Vditor.preview 失败，使用 markdown-it 作为后备
+    const MarkdownIt = (await import('markdown-it')).default
+    const md = new MarkdownIt({
+      html: true,
+      linkify: true,
+      typographer: true,
+      breaks: true,
+    })
+    previewContainer.value.innerHTML = md.render(markdown)
+  }
+}
+
+// 监听比赛变化和暗色模式变化
+watch([contest, isDarkMode], () => {
+  renderMarkdown()
+}, { immediate: false })
+
+onMounted(() => {
+  renderMarkdown()
+})
+
+// 返回功能
+const goBack = () => {
+  if (isAdminPage.value) {
+    router.push({ name: 'adminContest' })
+  } else {
+    router.push({ name: 'contest' })
+  }
+}
 
 // 报名功能
 const handleRegister = () => {
@@ -77,15 +134,24 @@ const handleRegister = () => {
     <div v-if="contest" class="flex gap-6">
       <!-- 左侧：赛事介绍（Markdown） -->
       <div class="flex-[2] space-y-4 rounded-xl border border-slate-200/80 bg-white/80 p-6 shadow-sm dark:border-slate-800 dark:bg-slate-900/70">
-        <h2 class="mb-4 text-center text-3xl font-bold text-slate-900 dark:text-slate-50">
+        <!-- 返回按钮 -->
+        <div class="mb-4">
+          <button
+            type="button"
+            class="inline-flex items-center gap-2 rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm font-medium text-slate-700 transition hover:bg-slate-50 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-200 dark:hover:bg-slate-700"
+            @click="goBack"
+          >
+            <ArrowLeft class="h-4 w-4" />
+            返回
+          </button>
+        </div>
+        <h2 class="mb-6 text-center text-3xl font-bold text-slate-900 dark:text-slate-50">
           赛事介绍
         </h2>
         <div
-          class="prose prose-sm max-w-none text-slate-800 dark:prose-invert dark:text-slate-100"
-        >
-          <!-- eslint-disable-next-line vue/no-v-html -->
-          <div v-html="renderedDescription" />
-        </div>
+          ref="previewContainer"
+          class="vditor-preview"
+        />
       </div>
 
       <!-- 右侧：比赛信息卡片 -->
@@ -158,8 +224,8 @@ const handleRegister = () => {
               </div>
             </div>
 
-            <!-- 报名按钮（仅管理员页面且比赛状态为待开始或进行中） -->
-            <div v-if="isAdminPage && canRegister" class="pt-2">
+            <!-- 报名按钮（仅用户页面，比赛状态为待开始或进行中时显示） -->
+            <div v-if="!isAdminPage && canRegister" class="pt-2">
               <button
                 type="button"
                 class="w-full rounded-lg bg-blue-600 px-4 py-2.5 text-sm font-medium text-white transition hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 dark:focus:ring-offset-slate-950"
@@ -182,4 +248,19 @@ const handleRegister = () => {
   </div>
 </template>
 
+<style scoped>
+/* 使用 Vditor 的预览样式 */
+:deep(.vditor-preview) {
+  color: rgb(30 41 59); /* text-slate-800 */
+}
+
+.dark :deep(.vditor-preview) {
+  color: rgb(226 232 240); /* text-slate-200 */
+}
+
+/* 确保 Vditor 预览样式正确应用 */
+:deep(.vditor-preview__action) {
+  display: none; /* 隐藏预览工具栏 */
+}
+</style>
 
