@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, onMounted } from 'vue';
+import { ref, computed, onMounted } from 'vue';
 import { useRoute } from 'vue-router';
 import {
   Terminal,
@@ -18,11 +18,15 @@ import {
   Settings,
   Edit,
   LogOut,
+  Wrench,
 } from 'lucide-vue-next';
 
 const searchText = ref('');
 const isDark = ref(false);
 const route = useRoute();
+
+// 判断是否在管理员路由下
+const isAdminRoute = computed(() => route.path.startsWith('/admin'));
 
 const toggleDarkMode = () => {
   isDark.value = !isDark.value;
@@ -126,6 +130,21 @@ const containers = ref([
           >
             <MessageSquare :size="16" />
             论坛
+          </router-link>
+
+          <!-- 管理（仅在管理员路由下显示） -->
+          <router-link
+            v-if="isAdminRoute"
+            to="/admin/manage"
+            class="rounded-button flex items-center gap-2 px-4 py-2 text-sm font-medium transition-all"
+            :class="
+              route.path === '/admin/manage'
+                ? 'font-bold text-blue-600 dark:text-blue-400'
+                : 'text-slate-500 hover:bg-slate-50 dark:text-slate-400 dark:hover:bg-slate-800'
+            "
+          >
+            <Wrench :size="16" />
+            管理
           </router-link>
         </nav>
       </div>

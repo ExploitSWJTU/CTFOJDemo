@@ -49,6 +49,11 @@ const router = createRouter({
       name: 'adminContestCreate',
       component: () => import('../views/AdminContestCreateView.vue'),
     },
+    {
+      path: '/admin/manage',
+      name: 'adminManage',
+      component: () => import('../views/AdminManageView.vue'),
+    },
   ],
 });
 

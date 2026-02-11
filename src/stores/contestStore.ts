@@ -149,6 +149,7 @@ export function updateContest(
     startTime?: string
     endTime?: string
     type?: ContestType
+    imageUrl?: string
   }
 ) {
   const contest = contestStore.contests.find((c) => c.id === id)
@@ -159,6 +160,7 @@ export function updateContest(
     if (data.startTime !== undefined) contest.startTime = data.startTime
     if (data.endTime !== undefined) contest.endTime = data.endTime
     if (data.type !== undefined) contest.type = data.type
+    if (data.imageUrl !== undefined) contest.imageUrl = data.imageUrl
     // TODO: 实际应该调用 API 保存到后端
     return true
   }

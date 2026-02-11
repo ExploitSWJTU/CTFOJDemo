@@ -68,7 +68,15 @@ const renderMarkdown = async () => {
   // 使用 Vditor 的预览功能渲染 Markdown
   // Vditor.preview(element, markdown, options)
   try {
-    const previewOptions: any = {
+    interface PreviewOptions {
+      mode: 'dark' | 'light'
+      anchor: number
+      speech: {
+        enable: boolean
+      }
+      theme?: string
+    }
+    const previewOptions: PreviewOptions = {
       mode: 'light',
       anchor: 1, // 显示标题锚点
       speech: {
@@ -81,7 +89,7 @@ const renderMarkdown = async () => {
     } else {
       previewOptions.theme = 'classic'
     }
-    Vditor.preview(previewContainer.value, markdown, previewOptions)
+    Vditor.preview(previewContainer.value, markdown, previewOptions as unknown as Parameters<typeof Vditor.preview>[2])
   } catch (error) {
     console.error('Vditor preview error:', error)
     // 如果 Vditor.preview 失败，使用 markdown-it 作为后备

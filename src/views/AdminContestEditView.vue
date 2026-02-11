@@ -19,7 +19,12 @@ const formData = ref({
   startTime: '',
   endTime: '',
   type: 'individual' as ContestType,
+  imageUrl: '',
 })
+
+// 图片上传相关
+const imageFile = ref<File | null>(null)
+const imagePreview = ref<string>('')
 
 // Vditor 实例
 const vditorRef = ref<InstanceType<typeof Vditor> | null>(null)
@@ -29,6 +34,22 @@ const editorContainer = ref<HTMLDivElement | null>(null)
 const isDarkMode = computed(() => {
   return document.documentElement.classList.contains('dark')
 })
+
+// 处理图片选择
+const handleImageSelect = (event: Event) => {
+  const target = event.target as HTMLInputElement
+  const file = target.files?.[0]
+  if (file) {
+    imageFile.value = file
+    // 创建预览
+    const reader = new FileReader()
+    reader.onload = (e) => {
+      imagePreview.value = e.target?.result as string
+      formData.value.imageUrl = imagePreview.value // 使用 base64 作为临时 URL
+    }
+    reader.readAsDataURL(file)
+  }
+}
 
 // 初始化表单数据和 Vditor
 onMounted(() => {
@@ -40,7 +61,10 @@ onMounted(() => {
       startTime: contest.value.startTime || '',
       endTime: contest.value.endTime || '',
       type: contest.value.type || 'individual',
+      imageUrl: contest.value.imageUrl || '',
     }
+    // 初始化图片预览
+    imagePreview.value = contest.value.imageUrl || ''
 
     // 初始化 Vditor
     if (editorContainer.value) {
@@ -95,6 +119,7 @@ const saveDescription = () => {
       startTime: formData.value.startTime,
       endTime: formData.value.endTime,
       type: formData.value.type,
+      imageUrl: formData.value.imageUrl,
     })
     if (success) {
       alert('保存成功！')
@@ -220,6 +245,37 @@ const goBack = () => {
                   团体赛
                 </option>
               </select>
+            </div>
+
+            <!-- 比赛海报 -->
+            <div>
+              <label class="mb-1.5 block text-sm font-medium text-slate-700 dark:text-slate-300">
+                比赛海报
+              </label>
+              <div class="space-y-3">
+                <input
+                  type="file"
+                  accept="image/*"
+                  class="block w-full text-sm text-slate-500 file:mr-4 file:rounded-lg file:border-0 file:bg-blue-50 file:px-4 file:py-2 file:text-sm file:font-semibold file:text-blue-700 hover:file:bg-blue-100 dark:file:bg-blue-900/20 dark:file:text-blue-300"
+                  @change="handleImageSelect"
+                />
+                <div
+                  v-if="imagePreview"
+                  class="relative overflow-hidden rounded-lg border border-slate-300 dark:border-slate-700"
+                >
+                  <img
+                    :src="imagePreview"
+                    alt="比赛海报预览"
+                    class="h-48 w-full object-cover"
+                  />
+                </div>
+                <div
+                  v-else
+                  class="flex h-48 items-center justify-center rounded-lg border-2 border-dashed border-slate-300 bg-slate-50 text-sm text-slate-400 dark:border-slate-700 dark:bg-slate-800"
+                >
+                  预览将在此显示
+                </div>
+              </div>
             </div>
           </div>
         </div>
