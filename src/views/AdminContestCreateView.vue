@@ -4,7 +4,7 @@ import { useRouter } from 'vue-router'
 import Vditor from 'vditor'
 import 'vditor/dist/index.css'
 import { Save, ArrowLeft } from 'lucide-vue-next'
-import { contestStore, createContest, type ContestType } from '../stores/contestStore'
+import { createContest, type ContestType } from '../stores/contestStore'
 
 const router = useRouter()
 
@@ -23,7 +23,7 @@ const imageFile = ref<File | null>(null)
 const imagePreview = ref<string>('')
 
 // Vditor 实例
-const vditorRef = ref<any>(null)
+const vditorRef = ref<InstanceType<typeof Vditor> | null>(null)
 const editorContainer = ref<HTMLDivElement | null>(null)
 
 // 检测暗色模式

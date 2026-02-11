@@ -22,7 +22,7 @@ const formData = ref({
 })
 
 // Vditor 实例
-const vditorRef = ref<any>(null)
+const vditorRef = ref<InstanceType<typeof Vditor> | null>(null)
 const editorContainer = ref<HTMLDivElement | null>(null)
 
 // 检测暗色模式
