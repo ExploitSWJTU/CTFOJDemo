@@ -1,0 +1,160 @@
+import type { Team } from '../types/team';
+
+export const teams: Team[] = [
+  {
+    id: 1,
+    name: 'CTF精英队',
+    avatar: 'https://api.dicebear.com/7.x/shapes/svg?seed=team1',
+    members: [
+      { id: 1, username: 'zhangsan', avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=zhangsan' },
+      { id: 2, username: 'lisi', avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=lisi' },
+      { id: 3, username: 'wangwu', avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=wangwu' },
+    ],
+    description: '专注于CTF竞赛的精英队伍，擅长Web、Pwn、Crypto等多个方向。',
+  },
+  {
+    id: 2,
+    name: '安全研究组',
+    avatar: 'https://api.dicebear.com/7.x/shapes/svg?seed=team2',
+    members: [
+      { id: 4, username: 'zhaoliu', avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=zhaoliu' },
+      { id: 5, username: 'sunqi', avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=sunqi' },
+    ],
+    description: '致力于网络安全研究和漏洞挖掘。',
+  },
+  {
+    id: 3,
+    name: '代码审计小队',
+    avatar: 'https://api.dicebear.com/7.x/shapes/svg?seed=team3',
+    members: [
+      { id: 1, username: 'zhangsan', avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=zhangsan' },
+      { id: 6, username: 'admin', avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=admin' },
+    ],
+    description: '专注于代码审计和漏洞分析。',
+  },
+  {
+    id: 4,
+    name: '渗透测试组',
+    avatar: 'https://api.dicebear.com/7.x/shapes/svg?seed=team4',
+    members: [
+      { id: 2, username: 'lisi', avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=lisi' },
+      { id: 3, username: 'wangwu', avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=wangwu' },
+      { id: 4, username: 'zhaoliu', avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=zhaoliu' },
+    ],
+    description: '专业的渗透测试团队，提供安全评估服务。',
+  },
+  {
+    id: 5,
+    name: '逆向工程组',
+    avatar: 'https://api.dicebear.com/7.x/shapes/svg?seed=team5',
+    members: [
+      { id: 5, username: 'sunqi', avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=sunqi' },
+    ],
+    description: '专注于恶意软件分析和逆向工程。',
+  },
+  {
+    id: 6,
+    name: '漏洞挖掘小队',
+    avatar: 'https://api.dicebear.com/7.x/shapes/svg?seed=team6',
+    members: [
+      { id: 7, username: 'zhouba', avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=zhouba' },
+      { id: 8, username: 'wujiu', avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=wujiu' },
+    ],
+    description: '专注于漏洞挖掘和安全研究。',
+  },
+  {
+    id: 7,
+    name: 'Web安全组',
+    avatar: 'https://api.dicebear.com/7.x/shapes/svg?seed=team7',
+    members: [
+      { id: 9, username: 'zhengshi', avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=zhengshi' },
+      { id: 10, username: 'wangshiyi', avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=wangshiyi' },
+      { id: 11, username: 'fengshier', avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=fengshier' },
+    ],
+    description: '专注于Web安全漏洞研究和防护。',
+  },
+  {
+    id: 8,
+    name: '密码学研究组',
+    avatar: 'https://api.dicebear.com/7.x/shapes/svg?seed=team8',
+    members: [
+      { id: 12, username: 'chenshisan', avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=chenshisan' },
+      { id: 13, username: 'chushisi', avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=chushisi' },
+    ],
+    description: '专注于密码学算法研究和应用。',
+  },
+  {
+    id: 9,
+    name: '移动安全组',
+    avatar: 'https://api.dicebear.com/7.x/shapes/svg?seed=team9',
+    members: [
+      { id: 14, username: 'weishiwu', avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=weishiwu' },
+      { id: 15, username: 'jiangshiliu', avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=jiangshiliu' },
+    ],
+    description: '专注于移动应用安全分析和防护。',
+  },
+  {
+    id: 10,
+    name: '区块链安全组',
+    avatar: 'https://api.dicebear.com/7.x/shapes/svg?seed=team10',
+    members: [
+      { id: 16, username: 'shenshigi', avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=shenshigi' },
+      { id: 17, username: 'hanshiba', avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=hanshiba' },
+      { id: 18, username: 'yangshijiu', avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=yangshijiu' },
+    ],
+    description: '专注于区块链安全研究和智能合约审计。',
+  },
+  {
+    id: 11,
+    name: 'IoT安全研究组',
+    avatar: 'https://api.dicebear.com/7.x/shapes/svg?seed=team11',
+    members: [
+      { id: 19, username: 'zhushier', avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=zhushier' },
+    ],
+    description: '专注于物联网设备安全研究。',
+  },
+  {
+    id: 12,
+    name: '云安全组',
+    avatar: 'https://api.dicebear.com/7.x/shapes/svg?seed=team12',
+    members: [
+      { id: 20, username: 'qinshiyi', avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=qinshiyi' },
+      { id: 21, username: 'youshier', avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=youshier' },
+    ],
+    description: '专注于云平台安全评估和防护。',
+  },
+  {
+    id: 13,
+    name: '数据安全组',
+    avatar: 'https://api.dicebear.com/7.x/shapes/svg?seed=team13',
+    members: [
+      { id: 22, username: 'xushisan', avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=xushisan' },
+      { id: 23, username: 'heshisi', avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=heshisi' },
+      { id: 24, username: 'lvshiwu', avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=lvshiwu' },
+      { id: 25, username: 'shishiliu', avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=shishiliu' },
+    ],
+    description: '专注于数据安全保护和隐私计算研究。',
+  },
+  {
+    id: 14,
+    name: 'AI安全组',
+    avatar: 'https://api.dicebear.com/7.x/shapes/svg?seed=team14',
+    members: [
+      { id: 1, username: 'zhangsan', avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=zhangsan' },
+      { id: 7, username: 'zhouba', avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=zhouba' },
+    ],
+    description: '专注于人工智能安全研究和对抗样本分析。',
+  },
+  {
+    id: 15,
+    name: '应急响应组',
+    avatar: 'https://api.dicebear.com/7.x/shapes/svg?seed=team15',
+    members: [
+      { id: 2, username: 'lisi', avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=lisi' },
+      { id: 8, username: 'wujiu', avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=wujiu' },
+      { id: 9, username: 'zhengshi', avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=zhengshi' },
+    ],
+    description: '专注于安全事件应急响应和处置。',
+  },
+];
+

@@ -51,7 +51,46 @@ const router = createRouter({
     },
     {
       path: '/admin/manage',
-      name: 'adminManage',
+      redirect: '/admin/manage/training',
+    },
+    {
+      path: '/admin/manage/training',
+      name: 'adminManageTraining',
+      component: () => import('../views/AdminManageView.vue'),
+    },
+    {
+      path: '/admin/manage/contest',
+      name: 'adminManageContest',
+      component: () => import('../views/AdminManageView.vue'),
+    },
+    {
+      path: '/admin/manage/forum',
+      name: 'adminManageForum',
+      component: () => import('../views/AdminManageView.vue'),
+    },
+    {
+      path: '/admin/manage/user',
+      name: 'adminManageUser',
+      component: () => import('../views/AdminManageView.vue'),
+    },
+    {
+      path: '/admin/manage/team',
+      name: 'adminManageTeam',
+      component: () => import('../views/AdminManageView.vue'),
+    },
+    {
+      path: '/admin/manage/instance',
+      name: 'adminManageInstance',
+      component: () => import('../views/AdminManageView.vue'),
+    },
+    {
+      path: '/admin/manage/log',
+      name: 'adminManageLog',
+      component: () => import('../views/AdminManageView.vue'),
+    },
+    {
+      path: '/admin/manage/setting',
+      name: 'adminManageSetting',
       component: () => import('../views/AdminManageView.vue'),
     },
   ],

@@ -239,8 +239,8 @@ const handleRegister = () => {
               </div>
             </div>
 
-            <!-- 报名按钮（仅用户页面，比赛状态为待开始或进行中时显示） -->
-            <div v-if="!isAdminPage && canRegister" class="pt-2">
+            <!-- 报名按钮（比赛状态为待开始或进行中时显示） -->
+            <div v-if="canRegister" class="pt-2">
               <button
                 type="button"
                 class="w-full rounded-lg bg-blue-600 px-4 py-2.5 text-sm font-medium text-white transition hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 dark:focus:ring-offset-slate-950"
