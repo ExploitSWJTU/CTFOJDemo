@@ -36,7 +36,6 @@ body {
   --color-border-2: #334155;
   --color-border-3: #475569;
   --color-border-4: #64748b;
-  /* 解决下拉框外层的 Arco 默认边框 */
   --color-bg-popup: transparent;
 }
 </style>
