@@ -14,6 +14,7 @@ const statusLabel: Record<ContestStatus, string> = {
 
 const route = useRoute()
 const router = useRouter()
+  /* 解决下拉框外层的 Arco 默认边框 */
 
 const contestId = computed(() => Number(route.params.id))
 const contest = computed(() => contestStore.contests.find((c) => c.id === contestId.value))

@@ -30,23 +30,38 @@ const isAdminRoute = computed(() => route.path.startsWith('/admin'));
 
 const toggleDarkMode = () => {
   isDark.value = !isDark.value;
+  updateTheme();
+};
+
+const updateTheme = () => {
+  const el = document.documentElement;
+  const body = document.body;
+  
   if (isDark.value) {
-    document.documentElement.classList.add('dark');
+    el.classList.add('dark');
+    body.classList.add('dark');
+    el.setAttribute('arco-theme', 'dark');
+    body.setAttribute('arco-theme', 'dark');
+    el.style.colorScheme = 'dark';
     localStorage.setItem('theme', 'dark');
   } else {
-    document.documentElement.classList.remove('dark');
+    el.classList.remove('dark');
+    body.classList.remove('dark');
+    el.removeAttribute('arco-theme');
+    body.removeAttribute('arco-theme');
+    el.style.colorScheme = 'light';
     localStorage.setItem('theme', 'light');
   }
 };
 
 onMounted(() => {
-  if (
-    localStorage.getItem('theme') === 'dark' ||
-    (!localStorage.getItem('theme') && window.matchMedia('(prefers-color-scheme: dark)').matches)
-  ) {
+  const savedTheme = localStorage.getItem('theme');
+  if (savedTheme === 'dark' || (!savedTheme && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
     isDark.value = true;
-    document.documentElement.classList.add('dark');
+  } else {
+    isDark.value = false;
   }
+  updateTheme();
 });
 
 const containers = ref([

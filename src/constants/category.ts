@@ -7,6 +7,7 @@ import {
   Smartphone,
   Brain,
   Shield,
+  Binary,
 } from 'lucide-vue-next';
 import type { Component } from 'vue';
 import type { Category } from '../types/challenge';
@@ -53,7 +54,7 @@ export const CATEGORY_MAP: Record<Category | 'All', CategoryMetadata> = {
   },
   Blockchain: {
     label: 'Blockchain',
-    icon: Lock,
+    icon: Binary,
     cardClass: 'text-[#F7BA1E] bg-[#FFFBE8] dark:text-[#F9D04B] dark:bg-[#453A14]',
     sidebar: {
       active: 'bg-[#F7BA1E] shadow-[#F7BA1E]/20 text-white',
