@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue';
-import { useRoute } from 'vue-router';
 import {
   Terminal,
   Search,
@@ -13,12 +12,10 @@ import {
   LogOut,
   Cpu,
   Database,
-  Globe,
 } from 'lucide-vue-next';
 
 const searchText = ref('');
 const isDark = ref(false);
-const route = useRoute();
 
 const toggleDarkMode = () => {
   isDark.value = !isDark.value;
