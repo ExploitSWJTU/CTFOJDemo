@@ -10,5 +10,7 @@ export interface Team {
   avatar?: string;
   members: TeamMember[];
   description: string;
+  inviteCode?: string; // 邀请码
+  creatorId?: number; // 创建者ID
 }
 

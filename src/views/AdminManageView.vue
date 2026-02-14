@@ -5,19 +5,24 @@ import { Search, Plus, Edit, Trash2, X, Save, ChevronLeft, ChevronRight } from '
 import type { User, UserRole } from '../types/user'
 import { users as mockUsers } from '../mock/users'
 import type { Team } from '../types/team'
-import { teams as mockTeams } from '../mock/teams'
+import { teamStore, updateTeam, deleteTeam, createTeam } from '../stores/teamStore'
+import { contestStore, deleteContest, updateContest } from '../stores/contestStore'
+import type { Announcement } from '../types/announcement'
+import { announcementStore, updateAnnouncement, createAnnouncement, deleteAnnouncement } from '../stores/announcementStore'
 
 const route = useRoute()
 const router = useRouter()
 
 // 标签页选项
 const tabs = [
+  { key: 'home', label: '首页管理', path: '/admin/manage/home' },
   { key: 'training', label: '训练管理', path: '/admin/manage/training' },
   { key: 'contest', label: '赛事管理', path: '/admin/manage/contest' },
   { key: 'forum', label: '论坛管理', path: '/admin/manage/forum' },
   { key: 'user', label: '用户管理', path: '/admin/manage/user' },
   { key: 'team', label: '队伍管理', path: '/admin/manage/team' },
   { key: 'instance', label: '实例管理', path: '/admin/manage/instance' },
+  { key: 'announcement', label: '公告管理', path: '/admin/manage/announcement' },
   { key: 'log', label: '系统日志', path: '/admin/manage/log' },
   { key: 'setting', label: '系统设置', path: '/admin/manage/setting' },
 ]
@@ -32,6 +37,95 @@ const activeTab = computed(() => {
 
 const handleTabClick = (path: string) => {
   router.push(path)
+}
+
+// ========== 比赛管理相关逻辑 ==========
+// 使用共享的比赛数据
+const allContests = computed(() => contestStore.contests)
+
+// 比赛搜索
+const contestSearchQuery = ref('')
+
+// 比赛分页
+const contestPageSize = ref(10)
+const contestCurrentPage = ref(1)
+
+// 过滤后的比赛列表
+const filteredContests = computed(() => {
+  let result = allContests.value
+
+  // 搜索筛选
+  if (contestSearchQuery.value.trim()) {
+    const query = contestSearchQuery.value.toLowerCase().trim()
+    result = result.filter(
+      (contest) =>
+        contest.name.toLowerCase().includes(query) ||
+        contest.brief.toLowerCase().includes(query) ||
+        contest.description.toLowerCase().includes(query)
+    )
+  }
+
+  return result
+})
+
+// 分页后的比赛列表
+const paginatedContests = computed(() => {
+  const start = (contestCurrentPage.value - 1) * contestPageSize.value
+  const end = start + contestPageSize.value
+  return filteredContests.value.slice(start, end)
+})
+
+// 总页数
+const contestTotalPages = computed(() => {
+  return Math.ceil(filteredContests.value.length / contestPageSize.value)
+})
+
+// 当搜索条件改变时，重置到第一页
+watch(contestSearchQuery, () => {
+  contestCurrentPage.value = 1
+})
+
+// 监听总页数变化，确保当前页码在有效范围内
+watch(contestTotalPages, (newTotalPages) => {
+  if (contestCurrentPage.value > newTotalPages && newTotalPages > 0) {
+    contestCurrentPage.value = newTotalPages
+  }
+})
+
+
+// 新建比赛
+const createContest = () => {
+  router.push({ path: '/admin/manage/contest/create' })
+}
+
+// 编辑比赛
+const editContest = (id: number) => {
+  router.push({ path: `/admin/manage/contest/edit/${id}` })
+}
+
+// 删除比赛
+const handleDeleteContest = (id: number) => {
+  if (confirm('确定要删除这个比赛吗？')) {
+    const success = deleteContest(id)
+    if (success) {
+      alert('删除成功')
+      // 如果当前页没有数据了，回到上一页
+      if (paginatedContests.value.length === 0 && contestCurrentPage.value > 1) {
+        contestCurrentPage.value--
+      }
+    } else {
+      alert('删除失败')
+    }
+  }
+}
+
+// 切换比赛激活状态
+const toggleContestActive = (contest: { id: number; isActive?: boolean }) => {
+  const newActiveState = !(contest.isActive ?? false)
+  const success = updateContest(contest.id, { isActive: newActiveState })
+  if (!success) {
+    alert('更新失败')
+  }
 }
 
 // ========== 用户管理相关逻辑 ==========
@@ -231,8 +325,8 @@ const getRoleClass = (role: UserRole) => {
 }
 
 // ========== 队伍管理相关逻辑 ==========
-// 队伍列表
-const teamList = ref<Team[]>([...mockTeams])
+// 使用共享的队伍数据
+const teamList = computed(() => teamStore.teams)
 
 // 队伍搜索
 const teamSearchQuery = ref('')
@@ -403,38 +497,179 @@ const saveTeam = () => {
 
   if (isTeamEditMode.value && editingTeam.value) {
     // 更新队伍
-    const index = teamList.value.findIndex((t) => t.id === editingTeam.value!.id)
-    if (index !== -1) {
-      const existingTeam = teamList.value[index]
-      if (existingTeam) {
-        teamList.value[index] = {
-          ...existingTeam,
-          ...teamFormData.value,
-          avatar: teamFormData.value.avatar || existingTeam.avatar || `https://api.dicebear.com/7.x/shapes/svg?seed=${teamFormData.value.name}`,
-          members: teamFormData.value.members || [],
-        } as Team
+    updateTeam(editingTeam.value.id, {
+      name: teamFormData.value.name,
+      avatar: teamFormData.value.avatar,
+      description: teamFormData.value.description,
+      members: teamFormData.value.members,
+    })
+  } else {
+    // 创建新队伍（管理员创建队伍时，需要指定创建者）
+    // 这里使用第一个用户作为创建者（实际应该使用当前登录的管理员）
+    const firstUser = userList.value[0]
+    if (firstUser) {
+      const newTeam = createTeam({
+        name: teamFormData.value.name!,
+        avatar: teamFormData.value.avatar,
+        description: teamFormData.value.description || '',
+        creatorId: firstUser.id,
+        creatorUsername: firstUser.username,
+        creatorAvatar: firstUser.avatar,
+      })
+      if (newTeam) {
+        alert(`队伍创建成功！邀请码：${newTeam.inviteCode}`)
       }
     }
-  } else {
-    // 创建新队伍
-    const newTeam: Team = {
-      id: Math.max(...teamList.value.map((t) => t.id), 0) + 1,
-      name: teamFormData.value.name!,
-      avatar: teamFormData.value.avatar || `https://api.dicebear.com/7.x/shapes/svg?seed=${teamFormData.value.name}`,
-      description: teamFormData.value.description || '',
-      members: teamFormData.value.members || [],
-    }
-    teamList.value.push(newTeam)
   }
   closeTeamDialog()
 }
 
 // 删除队伍
-const deleteTeam = (team: Team) => {
+const handleDeleteTeam = (team: Team) => {
   if (confirm(`确定要删除队伍 "${team.name}" 吗？`)) {
-    const index = teamList.value.findIndex((t) => t.id === team.id)
-    if (index !== -1) {
-      teamList.value.splice(index, 1)
+    deleteTeam(team.id)
+  }
+}
+
+// ========== 公告管理相关逻辑 ==========
+// 使用共享的公告数据
+const announcementList = computed(() => announcementStore.announcements)
+
+// 公告搜索
+const announcementSearchQuery = ref('')
+
+// 公告分页
+const announcementPageSize = ref(10)
+const announcementCurrentPage = ref(1)
+
+// 过滤后的公告列表
+const filteredAnnouncements = computed(() => {
+  let result = announcementList.value
+  if (announcementSearchQuery.value.trim()) {
+    const query = announcementSearchQuery.value.toLowerCase().trim()
+    result = result.filter(
+      (announcement) =>
+        announcement.title.toLowerCase().includes(query) ||
+        announcement.content.toLowerCase().includes(query) ||
+        announcement.author.toLowerCase().includes(query)
+    )
+  }
+  return result
+})
+
+// 分页后的公告列表
+const paginatedAnnouncements = computed(() => {
+  const start = (announcementCurrentPage.value - 1) * announcementPageSize.value
+  const end = start + announcementPageSize.value
+  return filteredAnnouncements.value.slice(start, end)
+})
+
+// 总页数
+const announcementTotalPages = computed(() => {
+  return Math.ceil(filteredAnnouncements.value.length / announcementPageSize.value)
+})
+
+// 当搜索条件改变时，重置到第一页
+watch(announcementSearchQuery, () => {
+  announcementCurrentPage.value = 1
+})
+
+// 监听总页数变化，确保当前页码在有效范围内
+watch(announcementTotalPages, (newTotalPages) => {
+  if (announcementCurrentPage.value > newTotalPages && newTotalPages > 0) {
+    announcementCurrentPage.value = newTotalPages
+  }
+})
+
+// 编辑/创建公告对话框
+const showAnnouncementDialog = ref(false)
+const editingAnnouncement = ref<Announcement | null>(null)
+const isAnnouncementEditMode = computed(() => editingAnnouncement.value !== null)
+
+// 公告表单数据
+const announcementFormData = ref({
+  title: '',
+  content: '',
+  isPinned: false,
+  status: 'published' as 'published' | 'draft',
+})
+
+// 打开创建公告对话框
+const openCreateAnnouncementDialog = () => {
+  editingAnnouncement.value = null
+  announcementFormData.value = {
+    title: '',
+    content: '',
+    isPinned: false,
+    status: 'published',
+  }
+  showAnnouncementDialog.value = true
+}
+
+// 打开编辑公告对话框
+const openEditAnnouncementDialog = (announcement: Announcement) => {
+  editingAnnouncement.value = announcement
+  announcementFormData.value = {
+    title: announcement.title,
+    content: announcement.content,
+    isPinned: announcement.isPinned,
+    status: announcement.status,
+  }
+  showAnnouncementDialog.value = true
+}
+
+// 关闭公告对话框
+const closeAnnouncementDialog = () => {
+  showAnnouncementDialog.value = false
+  editingAnnouncement.value = null
+  announcementFormData.value = {
+    title: '',
+    content: '',
+    isPinned: false,
+    status: 'published',
+  }
+}
+
+// 保存公告
+const saveAnnouncement = () => {
+  if (!announcementFormData.value.title.trim()) {
+    alert('请填写公告标题')
+    return
+  }
+  if (!announcementFormData.value.content.trim()) {
+    alert('请填写公告内容')
+    return
+  }
+
+  if (isAnnouncementEditMode.value && editingAnnouncement.value) {
+    // 更新公告
+    updateAnnouncement(editingAnnouncement.value.id, {
+      title: announcementFormData.value.title,
+      content: announcementFormData.value.content,
+      isPinned: announcementFormData.value.isPinned,
+      status: announcementFormData.value.status,
+    })
+  } else {
+    // 创建新公告
+    createAnnouncement({
+      title: announcementFormData.value.title,
+      content: announcementFormData.value.content,
+      isPinned: announcementFormData.value.isPinned,
+      status: announcementFormData.value.status,
+    })
+  }
+  closeAnnouncementDialog()
+}
+
+// 删除公告
+const handleDeleteAnnouncement = (announcement: Announcement) => {
+  if (confirm(`确定要删除公告 "${announcement.title}" 吗？`)) {
+    const success = deleteAnnouncement(announcement.id)
+    if (success) {
+      // 如果当前页没有数据了，回到上一页
+      if (paginatedAnnouncements.value.length === 0 && announcementCurrentPage.value > 1) {
+        announcementCurrentPage.value--
+      }
     }
   }
 }
@@ -471,13 +706,182 @@ const deleteTeam = (team: Team) => {
         </p>
       </div>
 
-      <div v-else-if="activeTab === 'contest'" class="space-y-4">
+      <div v-else-if="activeTab === 'home'" class="space-y-4">
         <h2 class="text-xl font-bold text-slate-900 dark:text-slate-50">
-          赛事管理
+          首页管理
         </h2>
         <p class="text-slate-600 dark:text-slate-400">
-          赛事管理功能待实现
+          首页管理功能待开发
         </p>
+      </div>
+
+      <div v-else-if="activeTab === 'contest'" class="space-y-4">
+        <!-- 搜索框和操作按钮 -->
+        <div class="flex items-center justify-between gap-4">
+          <div class="relative flex-1 max-w-md">
+            <Search class="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-slate-400" />
+            <input
+              v-model="contestSearchQuery"
+              type="text"
+              placeholder="搜索比赛名称或描述..."
+              class="h-10 w-full rounded-lg border border-slate-200 bg-slate-50 pr-4 pl-9 text-sm outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-200"
+            />
+          </div>
+          <button
+            class="flex items-center gap-2 rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-blue-700"
+            @click="createContest"
+          >
+            <Plus class="h-4 w-4" />
+            新建比赛
+          </button>
+        </div>
+
+        <!-- 比赛列表 -->
+        <div class="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm dark:border-slate-800 dark:bg-slate-900">
+          <div class="overflow-x-auto">
+            <table class="w-full">
+              <thead class="bg-slate-50 dark:bg-slate-800/50">
+                <tr>
+                  <th class="px-6 py-3 text-left text-xs font-bold uppercase tracking-wider text-slate-500">
+                    序号
+                  </th>
+                  <th class="px-6 py-3 text-left text-xs font-bold uppercase tracking-wider text-slate-500">
+                    比赛名称
+                  </th>
+                  <th class="px-6 py-3 text-left text-xs font-bold uppercase tracking-wider text-slate-500">
+                    状态
+                  </th>
+                  <th class="px-6 py-3 text-left text-xs font-bold uppercase tracking-wider text-slate-500">
+                    时间
+                  </th>
+                  <th class="px-6 py-3 text-left text-xs font-bold uppercase tracking-wider text-slate-500">
+                    简介
+                  </th>
+                  <th class="px-6 py-3 text-left text-xs font-bold uppercase tracking-wider text-slate-500">
+                    激活
+                  </th>
+                  <th class="px-6 py-3 text-right text-xs font-bold uppercase tracking-wider text-slate-500">
+                    操作
+                  </th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-slate-200 bg-white dark:divide-slate-800 dark:bg-slate-900">
+                <tr
+                  v-for="(contest, index) in paginatedContests"
+                  :key="contest.id"
+                  class="transition-colors hover:bg-slate-50 dark:hover:bg-slate-800/50"
+                >
+                  <td class="whitespace-nowrap px-6 py-4 text-sm text-slate-900 dark:text-slate-100">
+                    {{ (contestCurrentPage - 1) * contestPageSize + index + 1 }}
+                  </td>
+                  <td class="whitespace-nowrap px-6 py-4 text-sm font-medium text-slate-900 dark:text-slate-100">
+                    {{ contest.name }}
+                  </td>
+                  <td class="whitespace-nowrap px-6 py-4">
+                    <span
+                      v-if="contest.status === 'ongoing'"
+                      class="inline-flex items-center gap-1.5 whitespace-nowrap font-medium text-red-600 dark:text-red-400"
+                    >
+                      <span class="inline-block h-2 w-2 rounded-full bg-red-500" />
+                      进行中
+                    </span>
+                    <span
+                      v-else-if="contest.status === 'upcoming'"
+                      class="inline-flex items-center gap-1.5 whitespace-nowrap font-medium text-emerald-600 dark:text-emerald-300"
+                    >
+                      <span class="inline-block h-2 w-2 rounded-full bg-emerald-500" />
+                      待开始
+                    </span>
+                    <span
+                      v-else
+                      class="inline-flex items-center gap-1.5 whitespace-nowrap font-medium text-slate-500 dark:text-slate-400"
+                    >
+                      <span class="inline-block h-2 w-2 rounded-full bg-slate-400 dark:bg-slate-500" />
+                      已结束
+                    </span>
+                  </td>
+                  <td class="px-6 py-4 text-sm text-slate-600 dark:text-slate-300">
+                    <div class="space-y-1">
+                      <div class="text-xs">
+                        <span class="font-medium">开始：</span>{{ contest.startTime }}
+                      </div>
+                      <div class="text-xs">
+                        <span class="font-medium">结束：</span>{{ contest.endTime }}
+                      </div>
+                    </div>
+                  </td>
+                  <td class="px-6 py-4 text-sm text-slate-600 dark:text-slate-300">
+                    <div class="max-w-md truncate" :title="contest.brief">
+                      {{ contest.brief || '暂无简介' }}
+                    </div>
+                  </td>
+                  <td class="whitespace-nowrap px-6 py-4">
+                    <label class="relative inline-flex cursor-pointer items-center">
+                      <input
+                        type="checkbox"
+                        :checked="contest.isActive ?? false"
+                        class="peer sr-only"
+                        @change="toggleContestActive(contest)"
+                      />
+                      <div
+                        class="peer h-6 w-11 rounded-full bg-slate-200 transition-colors after:absolute after:left-[2px] after:top-[2px] after:h-5 after:w-5 after:rounded-full after:border after:border-slate-300 after:bg-white after:transition-all after:content-[''] peer-checked:bg-blue-600 peer-checked:after:translate-x-full peer-checked:after:border-white peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-blue-300 dark:border-slate-600 dark:bg-slate-700 dark:peer-focus:ring-blue-800"
+                      />
+                    </label>
+                  </td>
+                  <td class="whitespace-nowrap px-6 py-4 text-right text-sm font-medium">
+                    <div class="flex items-center justify-end gap-2">
+                      <button
+                        class="rounded-lg p-2 text-slate-600 transition-colors hover:bg-slate-100 hover:text-blue-600 dark:text-slate-400 dark:hover:bg-slate-800 dark:hover:text-blue-400"
+                        title="编辑"
+                        @click="editContest(contest.id)"
+                      >
+                        <Edit class="h-4 w-4" />
+                      </button>
+                      <button
+                        class="rounded-lg p-2 text-slate-600 transition-colors hover:bg-slate-100 hover:text-red-600 dark:text-slate-400 dark:hover:bg-slate-800 dark:hover:text-red-400"
+                        title="删除"
+                        @click="handleDeleteContest(contest.id)"
+                      >
+                        <Trash2 class="h-4 w-4" />
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+                <tr v-if="paginatedContests.length === 0">
+                  <td colspan="7" class="px-6 py-12 text-center text-sm text-slate-500">
+                    暂无比赛数据
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- 比赛分页 -->
+        <div v-if="contestTotalPages > 1" class="mt-4 flex items-center justify-between">
+          <div class="text-sm text-slate-600 dark:text-slate-400">
+            共 {{ filteredContests.length }} 条记录，第 {{ contestCurrentPage }} / {{ contestTotalPages }} 页
+          </div>
+          <div class="flex items-center gap-2">
+            <button
+              class="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm font-medium text-slate-700 transition-colors hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-50 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-slate-700"
+              :disabled="contestCurrentPage === 1"
+              @click="contestCurrentPage--"
+            >
+              <ChevronLeft class="h-4 w-4" />
+            </button>
+            <span class="px-3 py-2 text-sm font-medium text-slate-700 dark:text-slate-300">
+              {{ contestCurrentPage }} / {{ contestTotalPages }}
+            </span>
+            <button
+              class="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm font-medium text-slate-700 transition-colors hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-50 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-slate-700"
+              :disabled="contestCurrentPage === contestTotalPages"
+              @click="contestCurrentPage++"
+            >
+              <ChevronRight class="h-4 w-4" />
+            </button>
+          </div>
+        </div>
       </div>
 
       <div v-else-if="activeTab === 'forum'" class="space-y-4">
@@ -676,6 +1080,9 @@ const deleteTeam = (team: Team) => {
                   <th class="px-6 py-3 text-left text-xs font-bold uppercase tracking-wider text-slate-500">
                     队伍简介
                   </th>
+                  <th class="px-6 py-3 text-left text-xs font-bold uppercase tracking-wider text-slate-500">
+                    邀请码
+                  </th>
                   <th class="px-6 py-3 text-right text-xs font-bold uppercase tracking-wider text-slate-500">
                     操作
                   </th>
@@ -726,6 +1133,11 @@ const deleteTeam = (team: Team) => {
                       {{ team.description || '暂无简介' }}
                     </div>
                   </td>
+                  <td class="whitespace-nowrap px-6 py-4">
+                    <code class="rounded bg-slate-100 px-2 py-1 text-xs font-mono font-bold text-slate-700 dark:bg-slate-800 dark:text-slate-300">
+                      {{ team.inviteCode || 'N/A' }}
+                    </code>
+                  </td>
                   <td class="whitespace-nowrap px-6 py-4 text-right text-sm font-medium">
                     <div class="flex items-center justify-end gap-2">
                       <button
@@ -738,7 +1150,7 @@ const deleteTeam = (team: Team) => {
                       <button
                         class="rounded-lg p-2 text-slate-600 transition-colors hover:bg-slate-100 hover:text-red-600 dark:text-slate-400 dark:hover:bg-slate-800 dark:hover:text-red-400"
                         title="删除"
-                        @click="deleteTeam(team)"
+                        @click="handleDeleteTeam(team)"
                       >
                         <Trash2 class="h-4 w-4" />
                       </button>
@@ -746,7 +1158,7 @@ const deleteTeam = (team: Team) => {
                   </td>
                 </tr>
                 <tr v-if="paginatedTeams.length === 0">
-                  <td colspan="6" class="px-6 py-12 text-center text-sm text-slate-500">
+                  <td colspan="7" class="px-6 py-12 text-center text-sm text-slate-500">
                     暂无队伍数据
                   </td>
                 </tr>
@@ -789,6 +1201,160 @@ const deleteTeam = (team: Team) => {
         <p class="text-slate-600 dark:text-slate-400">
           实例管理功能待实现
         </p>
+      </div>
+
+      <div v-else-if="activeTab === 'announcement'" class="space-y-4">
+        <!-- 搜索框和操作按钮 -->
+        <div class="flex items-center justify-between gap-4">
+          <div class="relative flex-1 max-w-md">
+            <Search class="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-slate-400" />
+            <input
+              v-model="announcementSearchQuery"
+              type="text"
+              placeholder="搜索公告标题、内容或作者..."
+              class="h-10 w-full rounded-lg border border-slate-200 bg-slate-50 pr-4 pl-9 text-sm outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-200"
+            />
+          </div>
+          <button
+            class="flex items-center gap-2 rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-blue-700"
+            @click="openCreateAnnouncementDialog"
+          >
+            <Plus class="h-4 w-4" />
+            新建公告
+          </button>
+        </div>
+
+        <!-- 公告列表 -->
+        <div class="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm dark:border-slate-800 dark:bg-slate-900">
+          <div class="overflow-x-auto">
+            <table class="w-full">
+              <thead class="bg-slate-50 dark:bg-slate-800/50">
+                <tr>
+                  <th class="px-6 py-3 text-left text-xs font-bold uppercase tracking-wider text-slate-500">
+                    序号
+                  </th>
+                  <th class="px-6 py-3 text-left text-xs font-bold uppercase tracking-wider text-slate-500">
+                    标题
+                  </th>
+                  <th class="px-6 py-3 text-left text-xs font-bold uppercase tracking-wider text-slate-500">
+                    状态
+                  </th>
+                  <th class="px-6 py-3 text-left text-xs font-bold uppercase tracking-wider text-slate-500">
+                    置顶
+                  </th>
+                  <th class="px-6 py-3 text-left text-xs font-bold uppercase tracking-wider text-slate-500">
+                    作者
+                  </th>
+                  <th class="px-6 py-3 text-left text-xs font-bold uppercase tracking-wider text-slate-500">
+                    创建时间
+                  </th>
+                  <th class="px-6 py-3 text-left text-xs font-bold uppercase tracking-wider text-slate-500">
+                    更新时间
+                  </th>
+                  <th class="px-6 py-3 text-right text-xs font-bold uppercase tracking-wider text-slate-500">
+                    操作
+                  </th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-slate-200 bg-white dark:divide-slate-800 dark:bg-slate-900">
+                <tr
+                  v-for="(announcement, index) in paginatedAnnouncements"
+                  :key="announcement.id"
+                  class="transition-colors hover:bg-slate-50 dark:hover:bg-slate-800/50"
+                >
+                  <td class="whitespace-nowrap px-6 py-4 text-sm text-slate-900 dark:text-slate-100">
+                    {{ (announcementCurrentPage - 1) * announcementPageSize + index + 1 }}
+                  </td>
+                  <td class="px-6 py-4 text-sm font-medium text-slate-900 dark:text-slate-100">
+                    <div class="max-w-md truncate" :title="announcement.title">
+                      {{ announcement.title }}
+                    </div>
+                  </td>
+                  <td class="whitespace-nowrap px-6 py-4">
+                    <span
+                      class="inline-flex rounded-full px-2.5 py-0.5 text-xs font-semibold"
+                      :class="
+                        announcement.status === 'published'
+                          ? 'bg-green-100 text-green-700 dark:bg-green-500/15 dark:text-green-300'
+                          : 'bg-yellow-100 text-yellow-700 dark:bg-yellow-500/15 dark:text-yellow-300'
+                      "
+                    >
+                      {{ announcement.status === 'published' ? '已发布' : '草稿' }}
+                    </span>
+                  </td>
+                  <td class="whitespace-nowrap px-6 py-4">
+                    <span
+                      v-if="announcement.isPinned"
+                      class="inline-flex items-center gap-1 text-xs font-medium text-blue-600 dark:text-blue-400"
+                    >
+                      <span>📌</span>
+                      置顶
+                    </span>
+                    <span v-else class="text-xs text-slate-400">-</span>
+                  </td>
+                  <td class="whitespace-nowrap px-6 py-4 text-sm text-slate-600 dark:text-slate-300">
+                    {{ announcement.author }}
+                  </td>
+                  <td class="whitespace-nowrap px-6 py-4 text-sm text-slate-600 dark:text-slate-300">
+                    {{ announcement.createdAt }}
+                  </td>
+                  <td class="whitespace-nowrap px-6 py-4 text-sm text-slate-600 dark:text-slate-300">
+                    {{ announcement.updatedAt }}
+                  </td>
+                  <td class="whitespace-nowrap px-6 py-4 text-right text-sm font-medium">
+                    <div class="flex items-center justify-end gap-2">
+                      <button
+                        class="rounded-lg p-2 text-slate-600 transition-colors hover:bg-slate-100 hover:text-blue-600 dark:text-slate-400 dark:hover:bg-slate-800 dark:hover:text-blue-400"
+                        title="编辑"
+                        @click="openEditAnnouncementDialog(announcement)"
+                      >
+                        <Edit class="h-4 w-4" />
+                      </button>
+                      <button
+                        class="rounded-lg p-2 text-slate-600 transition-colors hover:bg-slate-100 hover:text-red-600 dark:text-slate-400 dark:hover:bg-slate-800 dark:hover:text-red-400"
+                        title="删除"
+                        @click="handleDeleteAnnouncement(announcement)"
+                      >
+                        <Trash2 class="h-4 w-4" />
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+                <tr v-if="paginatedAnnouncements.length === 0">
+                  <td colspan="8" class="px-6 py-12 text-center text-sm text-slate-500">
+                    暂无公告数据
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- 公告分页 -->
+        <div v-if="announcementTotalPages > 1" class="mt-4 flex items-center justify-between">
+          <div class="text-sm text-slate-600 dark:text-slate-400">
+            共 {{ filteredAnnouncements.length }} 条记录，第 {{ announcementCurrentPage }} / {{ announcementTotalPages }} 页
+          </div>
+          <div class="flex items-center gap-2">
+            <button
+              class="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm font-medium text-slate-700 transition-colors hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-50 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-slate-700"
+              :disabled="announcementCurrentPage === 1"
+              @click="announcementCurrentPage--"
+            >
+              <ChevronLeft class="h-4 w-4" />
+            </button>
+            <span class="px-3 py-2 text-sm font-medium text-slate-700 dark:text-slate-300">
+              {{ announcementCurrentPage }} / {{ announcementTotalPages }}
+            </span>
+            <button
+              class="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm font-medium text-slate-700 transition-colors hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-50 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-slate-700"
+              :disabled="announcementCurrentPage === announcementTotalPages"
+              @click="announcementCurrentPage++"
+            >
+              <ChevronRight class="h-4 w-4" />
+            </button>
+          </div>
+        </div>
       </div>
 
       <div v-else-if="activeTab === 'log'" class="space-y-4">
@@ -1114,6 +1680,106 @@ const deleteTeam = (team: Team) => {
           <button
             class="flex items-center gap-2 rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-blue-700"
             @click="saveUser"
+          >
+            <Save class="h-4 w-4" />
+            保存
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 创建/编辑公告对话框 -->
+    <div
+      v-if="showAnnouncementDialog"
+      class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4"
+      @click.self="closeAnnouncementDialog"
+    >
+      <div
+        class="w-full max-w-3xl rounded-xl border border-slate-200 bg-white shadow-xl dark:border-slate-800 dark:bg-slate-900"
+      >
+        <!-- 对话框头部 -->
+        <div class="flex items-center justify-between border-b border-slate-200 px-6 py-4 dark:border-slate-800">
+          <h3 class="text-lg font-bold text-slate-900 dark:text-slate-100">
+            {{ isAnnouncementEditMode ? '编辑公告' : '新建公告' }}
+          </h3>
+          <button
+            class="rounded-lg p-1 text-slate-400 transition-colors hover:bg-slate-100 hover:text-slate-900 dark:hover:bg-slate-800 dark:hover:text-slate-100"
+            @click="closeAnnouncementDialog"
+          >
+            <X class="h-5 w-5" />
+          </button>
+        </div>
+
+        <!-- 对话框内容 -->
+        <div class="px-6 py-4">
+          <div class="space-y-4">
+            <div>
+              <label class="mb-2 block text-sm font-medium text-slate-700 dark:text-slate-300">
+                公告标题 <span class="text-red-500">*</span>
+              </label>
+              <input
+                v-model="announcementFormData.title"
+                type="text"
+                placeholder="请输入公告标题"
+                class="h-10 w-full rounded-lg border border-slate-200 bg-slate-50 px-3 text-sm outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-200"
+              />
+            </div>
+
+            <div>
+              <label class="mb-2 block text-sm font-medium text-slate-700 dark:text-slate-300">
+                公告内容 <span class="text-red-500">*</span>
+              </label>
+              <textarea
+                v-model="announcementFormData.content"
+                rows="6"
+                placeholder="请输入公告内容"
+                class="w-full rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-200"
+              />
+            </div>
+
+            <div class="flex items-center gap-6">
+              <div class="flex items-center gap-2">
+                <input
+                  v-model="announcementFormData.isPinned"
+                  type="checkbox"
+                  class="h-4 w-4 rounded border-slate-300 text-blue-600 focus:ring-blue-500 dark:border-slate-600"
+                />
+                <label class="text-sm font-medium text-slate-700 dark:text-slate-300">
+                  置顶
+                </label>
+              </div>
+
+              <div>
+                <label class="mb-2 block text-sm font-medium text-slate-700 dark:text-slate-300">
+                  状态
+                </label>
+                <select
+                  v-model="announcementFormData.status"
+                  class="h-10 rounded-lg border border-slate-200 bg-slate-50 px-3 text-sm outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-200"
+                >
+                  <option value="published">
+                    已发布
+                  </option>
+                  <option value="draft">
+                    草稿
+                  </option>
+                </select>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 对话框底部 -->
+        <div class="flex items-center justify-end gap-3 border-t border-slate-200 px-6 py-4 dark:border-slate-800">
+          <button
+            class="rounded-lg border border-slate-200 bg-white px-4 py-2 text-sm font-medium text-slate-700 transition-colors hover:bg-slate-50 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-slate-700"
+            @click="closeAnnouncementDialog"
+          >
+            取消
+          </button>
+          <button
+            class="flex items-center gap-2 rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-blue-700"
+            @click="saveAnnouncement"
           >
             <Save class="h-4 w-4" />
             保存

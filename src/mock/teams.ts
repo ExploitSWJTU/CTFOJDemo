@@ -11,6 +11,8 @@ export const teams: Team[] = [
       { id: 3, username: 'wangwu', avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=wangwu' },
     ],
     description: '专注于CTF竞赛的精英队伍，擅长Web、Pwn、Crypto等多个方向。',
+    inviteCode: 'A3K7-M9P2-X4Y8',
+    creatorId: 1,
   },
   {
     id: 2,
@@ -21,6 +23,8 @@ export const teams: Team[] = [
       { id: 5, username: 'sunqi', avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=sunqi' },
     ],
     description: '致力于网络安全研究和漏洞挖掘。',
+    inviteCode: 'B5N8-K2M7-P9Q3',
+    creatorId: 4,
   },
   {
     id: 3,
@@ -31,6 +35,8 @@ export const teams: Team[] = [
       { id: 6, username: 'admin', avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=admin' },
     ],
     description: '专注于代码审计和漏洞分析。',
+    inviteCode: 'C7M3-N5K9-R2P8',
+    creatorId: 1,
   },
   {
     id: 4,
@@ -42,6 +48,8 @@ export const teams: Team[] = [
       { id: 4, username: 'zhaoliu', avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=zhaoliu' },
     ],
     description: '专业的渗透测试团队，提供安全评估服务。',
+    inviteCode: 'D9Q4-L8M2-K7N5',
+    creatorId: 2,
   },
   {
     id: 5,
@@ -51,6 +59,8 @@ export const teams: Team[] = [
       { id: 5, username: 'sunqi', avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=sunqi' },
     ],
     description: '专注于恶意软件分析和逆向工程。',
+    inviteCode: 'E5R7-P3M9-N8K4',
+    creatorId: 5,
   },
   {
     id: 6,
@@ -61,6 +71,8 @@ export const teams: Team[] = [
       { id: 8, username: 'wujiu', avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=wujiu' },
     ],
     description: '专注于漏洞挖掘和安全研究。',
+    inviteCode: 'F2S9-M6P4-K8N7',
+    creatorId: 7,
   },
   {
     id: 7,
@@ -72,6 +84,8 @@ export const teams: Team[] = [
       { id: 11, username: 'fengshier', avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=fengshier' },
     ],
     description: '专注于Web安全漏洞研究和防护。',
+    inviteCode: 'G8T3-N5K7-M9P2',
+    creatorId: 9,
   },
   {
     id: 8,
@@ -82,6 +96,8 @@ export const teams: Team[] = [
       { id: 13, username: 'chushisi', avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=chushisi' },
     ],
     description: '专注于密码学算法研究和应用。',
+    inviteCode: 'H4U7-K9M3-P6N8',
+    creatorId: 12,
   },
   {
     id: 9,
@@ -92,6 +108,8 @@ export const teams: Team[] = [
       { id: 15, username: 'jiangshiliu', avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=jiangshiliu' },
     ],
     description: '专注于移动应用安全分析和防护。',
+    inviteCode: 'J6V9-M4P8-K7N3',
+    creatorId: 14,
   },
   {
     id: 10,
@@ -103,6 +121,8 @@ export const teams: Team[] = [
       { id: 18, username: 'yangshijiu', avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=yangshijiu' },
     ],
     description: '专注于区块链安全研究和智能合约审计。',
+    inviteCode: 'K8W2-N5M7-P9K4',
+    creatorId: 16,
   },
   {
     id: 11,
@@ -112,6 +132,8 @@ export const teams: Team[] = [
       { id: 19, username: 'zhushier', avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=zhushier' },
     ],
     description: '专注于物联网设备安全研究。',
+    inviteCode: 'L3X6-M8P4-K9N7',
+    creatorId: 19,
   },
   {
     id: 12,
@@ -122,6 +144,8 @@ export const teams: Team[] = [
       { id: 21, username: 'youshier', avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=youshier' },
     ],
     description: '专注于云平台安全评估和防护。',
+    inviteCode: 'M7Y4-N2K8-P5M9',
+    creatorId: 20,
   },
   {
     id: 13,
@@ -134,6 +158,8 @@ export const teams: Team[] = [
       { id: 25, username: 'shishiliu', avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=shishiliu' },
     ],
     description: '专注于数据安全保护和隐私计算研究。',
+    inviteCode: 'N9Z3-K5M7-P8N4',
+    creatorId: 22,
   },
   {
     id: 14,
@@ -144,6 +170,8 @@ export const teams: Team[] = [
       { id: 7, username: 'zhouba', avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=zhouba' },
     ],
     description: '专注于人工智能安全研究和对抗样本分析。',
+    inviteCode: 'P4A7-M6K9-N8P2',
+    creatorId: 1,
   },
   {
     id: 15,
@@ -155,6 +183,8 @@ export const teams: Team[] = [
       { id: 9, username: 'zhengshi', avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=zhengshi' },
     ],
     description: '专注于安全事件应急响应和处置。',
+    inviteCode: 'Q6B8-K3M7-N9P5',
+    creatorId: 2,
   },
 ];
 

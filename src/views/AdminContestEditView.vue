@@ -123,7 +123,8 @@ const saveDescription = () => {
     })
     if (success) {
       alert('保存成功！')
-      // 保存后停留在当前编辑页面
+      // 保存后返回比赛列表
+      router.push('/admin/manage/contest')
     } else {
       alert('保存失败，未找到对应的比赛')
     }
@@ -132,7 +133,7 @@ const saveDescription = () => {
 
 // 返回
 const goBack = () => {
-  router.push({ name: 'adminContest' })
+  router.push('/admin/manage/contest')
 }
 </script>
 

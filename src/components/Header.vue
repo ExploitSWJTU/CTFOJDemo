@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue';
+import { ref, onMounted } from 'vue';
 import { useRoute } from 'vue-router';
 import {
   Terminal,
@@ -7,6 +7,7 @@ import {
   Swords,
   Flag,
   MessageSquare,
+  Users,
   Search,
   Box,
   Clock,
@@ -24,9 +25,6 @@ import {
 const searchText = ref('');
 const isDark = ref(false);
 const route = useRoute();
-
-// 判断是否在管理员路由下
-const isAdminRoute = computed(() => route.path.startsWith('/admin'));
 
 const toggleDarkMode = () => {
   isDark.value = !isDark.value;
@@ -133,6 +131,20 @@ const containers = ref([
             赛事
           </router-link>
 
+          <!-- 队伍 -->
+          <router-link
+            to="/team"
+            class="rounded-button flex items-center gap-2 px-4 py-2 text-sm font-medium transition-all"
+            :class="
+              route.path === '/team'
+                ? 'font-bold text-blue-600 dark:text-blue-400'
+                : 'text-slate-500 hover:bg-slate-50 dark:text-slate-400 dark:hover:bg-slate-800'
+            "
+          >
+            <Users :size="16" />
+            队伍
+          </router-link>
+
           <!-- 论坛 -->
           <router-link
             to="/forum"
@@ -147,13 +159,12 @@ const containers = ref([
             论坛
           </router-link>
 
-          <!-- 管理（仅在管理员路由下显示） -->
+          <!-- 管理 -->
           <router-link
-            v-if="isAdminRoute"
             to="/admin/manage"
             class="rounded-button flex items-center gap-2 px-4 py-2 text-sm font-medium transition-all"
             :class="
-              route.path === '/admin/manage'
+              route.path.startsWith('/admin/manage')
                 ? 'font-bold text-blue-600 dark:text-blue-400'
                 : 'text-slate-500 hover:bg-slate-50 dark:text-slate-400 dark:hover:bg-slate-800'
             "

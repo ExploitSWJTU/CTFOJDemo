@@ -129,7 +129,7 @@ const handleCreate = () => {
     if (newContest) {
       alert('创建成功！')
       // 跳转到比赛列表
-      router.push({ name: 'adminContest' })
+      router.push('/admin/manage/contest')
     } else {
       alert('创建失败，请重试')
     }
@@ -138,7 +138,7 @@ const handleCreate = () => {
 
 // 返回
 const goBack = () => {
-  router.push({ name: 'adminContest' })
+  router.push('/admin/manage/contest')
 }
 </script>
 

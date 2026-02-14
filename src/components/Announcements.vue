@@ -1,29 +1,49 @@
 <script setup lang="ts">
 import { Megaphone } from 'lucide-vue-next';
+import { computed } from 'vue';
+import { useRouter } from 'vue-router';
+import { getPublishedAnnouncements } from '../stores/announcementStore';
 
-const announcements = [
-  {
-    id: 1,
-    type: '赛事公告',
-    typeColor: 'text-blue-400',
-    title: '春季联赛 (Spring Cup) 即将报名',
-    date: '02-06',
-  },
-  {
-    id: 2,
-    type: '版本更新',
-    typeColor: 'text-emerald-400',
-    title: 'V2.4.0 更新：新增容器续时功能',
-    date: '02-05',
-  },
-  {
-    id: 3,
-    type: '系统通知',
-    typeColor: 'text-amber-400',
-    title: '关于寒假期间服务器维护的通知',
-    date: '02-03',
-  },
-];
+const router = useRouter();
+
+// 获取已发布的公告（最多显示3条）
+const announcements = computed(() => {
+  const published = getPublishedAnnouncements();
+  return published.slice(0, 3).map((ann) => {
+    // 根据标题内容判断类型
+    let type = '系统通知';
+    let typeColor = 'text-amber-400';
+    if (ann.title.includes('比赛') || ann.title.includes('赛事') || ann.title.includes('CTF')) {
+      type = '赛事公告';
+      typeColor = 'text-blue-400';
+    } else if (ann.title.includes('更新') || ann.title.includes('版本')) {
+      type = '版本更新';
+      typeColor = 'text-emerald-400';
+    }
+    
+    // 格式化日期
+    const dateParts = ann.createdAt?.split(' ')[0]?.split('-')
+    const date = dateParts && dateParts.length > 1 ? dateParts.slice(1).join('-') : '';
+    
+    return {
+      id: ann.id,
+      type,
+      typeColor,
+      title: ann.title,
+      date,
+    };
+  });
+});
+
+// 跳转到公告列表
+const goToAnnouncementList = () => {
+  router.push({ path: '/announcement' });
+};
+
+// 跳转到公告详情
+const goToAnnouncementDetail = (id: number) => {
+  router.push({ path: `/announcement/${id}` });
+};
 </script>
 
 <template>
@@ -45,6 +65,7 @@ const announcements = [
         v-for="(item, index) in announcements"
         :key="item.id"
         :class="['group cursor-pointer', index !== 0 ? 'border-t border-slate-800 pt-3' : '']"
+        @click="goToAnnouncementDetail(item.id)"
       >
         <div class="flex items-start justify-between">
           <div class="flex flex-col">
@@ -64,6 +85,7 @@ const announcements = [
 
     <button
       class="rounded-inner relative mt-auto w-full shrink-0 border border-slate-700 bg-slate-800 py-2 text-[10px] font-black text-slate-300 transition-all hover:bg-slate-700 hover:text-white"
+      @click="goToAnnouncementList"
     >
       查看全部历史公告
     </button>

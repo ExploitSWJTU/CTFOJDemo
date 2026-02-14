@@ -49,7 +49,8 @@ const pageSize = ref(4)
 const currentPage = ref(Number(route.query.page) || 1)
 
 const filteredContests = computed(() => {
-  let result = allContests.value
+  // 只显示激活的比赛
+  let result = allContests.value.filter((contest) => contest.isActive !== false)
 
   // 状态筛选
   if (selectedStatus.value !== 'all') {

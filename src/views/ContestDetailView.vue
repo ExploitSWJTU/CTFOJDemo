@@ -19,9 +19,6 @@ const router = useRouter()
 const contestId = computed(() => Number(route.params.id))
 const contest = computed(() => contestStore.contests.find((c) => c.id === contestId.value))
 
-// 判断是否是管理员页面
-const isAdminPage = computed(() => route.name === 'adminContestDetail')
-
 // 判断是否可以报名（待开始或进行中）
 const canRegister = computed(() => {
   return contest.value && (contest.value.status === 'upcoming' || contest.value.status === 'ongoing')
@@ -116,11 +113,7 @@ onMounted(() => {
 
 // 返回功能
 const goBack = () => {
-  if (isAdminPage.value) {
-    router.push({ name: 'adminContest' })
-  } else {
-    router.push({ name: 'contest' })
-  }
+  router.push({ name: 'contest' })
 }
 
 // 报名功能

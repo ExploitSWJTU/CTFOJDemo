@@ -25,29 +25,24 @@ const router = createRouter({
       component: () => import('../views/ContestDetailView.vue'),
     },
     {
+      path: '/team',
+      name: 'team',
+      component: () => import('../views/TeamView.vue'),
+    },
+    {
       path: '/forum',
       name: 'forum',
       component: () => import('../views/ForumView.vue'),
     },
     {
-      path: '/admin/contest',
-      name: 'adminContest',
-      component: () => import('../views/AdminContestView.vue'),
+      path: '/announcement',
+      name: 'announcement',
+      component: () => import('../views/AnnouncementListView.vue'),
     },
     {
-      path: '/admin/contest/:id',
-      name: 'adminContestDetail',
-      component: () => import('../views/ContestDetailView.vue'),
-    },
-    {
-      path: '/admin/contest/edit/:id',
-      name: 'adminContestEdit',
-      component: () => import('../views/AdminContestEditView.vue'),
-    },
-    {
-      path: '/admin/contest/create',
-      name: 'adminContestCreate',
-      component: () => import('../views/AdminContestCreateView.vue'),
+      path: '/announcement/:id',
+      name: 'announcementDetail',
+      component: () => import('../views/AnnouncementDetailView.vue'),
     },
     {
       path: '/admin/manage',
@@ -59,9 +54,24 @@ const router = createRouter({
       component: () => import('../views/AdminManageView.vue'),
     },
     {
+      path: '/admin/manage/home',
+      name: 'adminManageHome',
+      component: () => import('../views/AdminManageView.vue'),
+    },
+    {
       path: '/admin/manage/contest',
       name: 'adminManageContest',
       component: () => import('../views/AdminManageView.vue'),
+    },
+    {
+      path: '/admin/manage/contest/create',
+      name: 'adminManageContestCreate',
+      component: () => import('../views/AdminContestCreateView.vue'),
+    },
+    {
+      path: '/admin/manage/contest/edit/:id',
+      name: 'adminManageContestEdit',
+      component: () => import('../views/AdminContestEditView.vue'),
     },
     {
       path: '/admin/manage/forum',
@@ -81,6 +91,11 @@ const router = createRouter({
     {
       path: '/admin/manage/instance',
       name: 'adminManageInstance',
+      component: () => import('../views/AdminManageView.vue'),
+    },
+    {
+      path: '/admin/manage/announcement',
+      name: 'adminManageAnnouncement',
       component: () => import('../views/AdminManageView.vue'),
     },
     {
