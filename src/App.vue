@@ -1,12 +1,19 @@
 <script setup lang="ts">
+import { computed } from 'vue';
+import { useRoute } from 'vue-router';
 import Header from './components/Header.vue';
+import AdminHeader from './components/AdminHeader.vue';
+
+const route = useRoute();
+const isAdmin = computed(() => route.path.startsWith('/admin'));
 </script>
 
 <template>
   <div
     class="min-h-screen bg-slate-50 font-sans text-slate-800 transition-colors duration-300 dark:bg-slate-950 dark:text-slate-200"
   >
-    <Header />
+    <AdminHeader v-if="isAdmin" />
+    <Header v-else />
 
     <main class="mx-auto max-w-384 p-6">
       <router-view />

@@ -4,7 +4,7 @@ import { useRouter } from 'vue-router'
 import Vditor from 'vditor'
 import 'vditor/dist/index.css'
 import { Save, ArrowLeft } from 'lucide-vue-next'
-import { createContest, type ContestType } from '../stores/contestStore'
+import { createContest, type ContestType } from '../../stores/contestStore'
 
 const router = useRouter()
 

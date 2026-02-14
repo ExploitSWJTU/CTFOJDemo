@@ -14,6 +14,7 @@ declare module 'vue' {
     ACarousel: typeof import('@arco-design/web-vue')['Carousel']
     ACarouselItem: typeof import('@arco-design/web-vue')['CarouselItem']
     ActivityFeed: typeof import('./src/components/ActivityFeed.vue')['default']
+    AdminHeader: typeof import('./src/components/AdminHeader.vue')['default']
     ADropdown: typeof import('@arco-design/web-vue')['Dropdown']
     AModal: typeof import('@arco-design/web-vue')['Modal']
     Announcements: typeof import('./src/components/Announcements.vue')['default']

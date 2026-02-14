@@ -46,67 +46,73 @@ const router = createRouter({
     },
     {
       path: '/admin/manage',
-      redirect: '/admin/manage/training',
-    },
-    {
-      path: '/admin/manage/training',
-      name: 'adminManageTraining',
       component: () => import('../views/AdminManageView.vue'),
-    },
-    {
-      path: '/admin/manage/home',
-      name: 'adminManageHome',
-      component: () => import('../views/AdminManageView.vue'),
-    },
-    {
-      path: '/admin/manage/contest',
-      name: 'adminManageContest',
-      component: () => import('../views/AdminManageView.vue'),
-    },
-    {
-      path: '/admin/manage/contest/create',
-      name: 'adminManageContestCreate',
-      component: () => import('../views/AdminContestCreateView.vue'),
-    },
-    {
-      path: '/admin/manage/contest/edit/:id',
-      name: 'adminManageContestEdit',
-      component: () => import('../views/AdminContestEditView.vue'),
-    },
-    {
-      path: '/admin/manage/forum',
-      name: 'adminManageForum',
-      component: () => import('../views/AdminManageView.vue'),
-    },
-    {
-      path: '/admin/manage/user',
-      name: 'adminManageUser',
-      component: () => import('../views/AdminManageView.vue'),
-    },
-    {
-      path: '/admin/manage/team',
-      name: 'adminManageTeam',
-      component: () => import('../views/AdminManageView.vue'),
-    },
-    {
-      path: '/admin/manage/instance',
-      name: 'adminManageInstance',
-      component: () => import('../views/AdminManageView.vue'),
-    },
-    {
-      path: '/admin/manage/announcement',
-      name: 'adminManageAnnouncement',
-      component: () => import('../views/AdminManageView.vue'),
-    },
-    {
-      path: '/admin/manage/log',
-      name: 'adminManageLog',
-      component: () => import('../views/AdminManageView.vue'),
-    },
-    {
-      path: '/admin/manage/setting',
-      name: 'adminManageSetting',
-      component: () => import('../views/AdminManageView.vue'),
+      children: [
+        {
+          path: '',
+          redirect: '/admin/manage/training',
+        },
+        {
+          path: 'home',
+          name: 'adminManageHome',
+          component: () => import('../views/admin/AdminHomeView.vue'),
+        },
+        {
+          path: 'training',
+          name: 'adminManageTraining',
+          component: () => import('../views/admin/AdminTrainingView.vue'),
+        },
+        {
+          path: 'contest',
+          name: 'adminManageContest',
+          component: () => import('../views/admin/AdminContestView.vue'),
+        },
+        {
+          path: 'contest/create',
+          name: 'adminManageContestCreate',
+          component: () => import('../views/admin/AdminContestCreateView.vue'),
+        },
+        {
+          path: 'contest/edit/:id',
+          name: 'adminManageContestEdit',
+          component: () => import('../views/admin/AdminContestEditView.vue'),
+        },
+        {
+          path: 'forum',
+          name: 'adminManageForum',
+          component: () => import('../views/admin/AdminForumView.vue'),
+        },
+        {
+          path: 'user',
+          name: 'adminManageUser',
+          component: () => import('../views/admin/AdminUserView.vue'),
+        },
+        {
+          path: 'team',
+          name: 'adminManageTeam',
+          component: () => import('../views/admin/AdminTeamView.vue'),
+        },
+        {
+          path: 'instance',
+          name: 'adminManageInstance',
+          component: () => import('../views/admin/AdminInstanceView.vue'),
+        },
+        {
+          path: 'announcement',
+          name: 'adminManageAnnouncement',
+          component: () => import('../views/admin/AdminAnnouncementView.vue'),
+        },
+        {
+          path: 'log',
+          name: 'adminManageLog',
+          component: () => import('../views/admin/AdminLogView.vue'),
+        },
+        {
+          path: 'setting',
+          name: 'adminManageSetting',
+          component: () => import('../views/admin/AdminSettingView.vue'),
+        },
+      ],
     },
   ],
 });

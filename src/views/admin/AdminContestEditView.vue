@@ -4,7 +4,7 @@ import { useRoute, useRouter } from 'vue-router'
 import Vditor from 'vditor'
 import 'vditor/dist/index.css'
 import { Save, ArrowLeft } from 'lucide-vue-next'
-import { contestStore, updateContest, type ContestType } from '../stores/contestStore'
+import { contestStore, updateContest, type ContestType } from '../../stores/contestStore'
 
 const route = useRoute()
 const router = useRouter()
@@ -294,7 +294,7 @@ const goBack = () => {
     <!-- 未找到比赛 -->
     <div
       v-else
-      class="flex min-h-[200px] items-center justify-center rounded-xl border border-dashed border-slate-300 bg-white/60 text-sm text-slate-500 dark:border-slate-700 dark:bg-slate-900/70 dark:text-slate-400"
+      class="flex min-h-50 items-center justify-center rounded-xl border border-dashed border-slate-300 bg-white/60 text-sm text-slate-500 dark:border-slate-700 dark:bg-slate-900/70 dark:text-slate-400"
     >
       未找到对应的赛事信息。
     </div>
