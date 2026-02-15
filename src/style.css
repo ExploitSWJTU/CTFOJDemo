@@ -10,25 +10,25 @@
   --radius-select: 0.6rem; /* 下拉框或较小容器 (xl) */
   --radius-button: 0.3rem; /* 按钮、标签 (lg) */
 
-  /* 语义化色彩体系 - 默认 (浅色模式) */
-  --color-app-bg: #f8fafc; /* slate-50 */
-  --color-app-card: #ffffff; /* white */
-  --color-app-border: #e2e8f0; /* slate-200 */
-  --color-app-text: #1e293b; /* slate-800 */
-  --color-app-text-muted: #64748b; /* slate-500 */
-
-  /* 语义化色彩体系 - 深色模式切换 */
-  @variant dark {
-    --color-app-bg: #020617; /* slate-950 */
-    --color-app-card: #0f172a; /* slate-900 */
-    --color-app-border: #1e293b; /* slate-800 */
-    --color-app-text: #f1f5f9; /* slate-100 */
-    --color-app-text-muted: #94a3b8; /* slate-400 */
-  }
+  /* 语义化色彩体系 - 默认值 (Tailwind 自动将其映射为 --color-app-*) */
+  --color-app-bg: #f8fafc;
+  --color-app-card: #ffffff;
+  --color-app-border: #e2e8f0;
+  --color-app-text: #1e293b;
+  --color-app-text-muted: #64748b;
 }
 
 @layer base {
   body {
     @apply transition-colors duration-300;
+  }
+
+  /* 语义化色彩体系 - 深色模式覆盖 */
+  .dark {
+    --color-app-bg: #020617;
+    --color-app-card: #0f172a;
+    --color-app-border: #1e293b;
+    --color-app-text: #f1f5f9;
+    --color-app-text-muted: #94a3b8;
   }
 }
