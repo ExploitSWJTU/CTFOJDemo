@@ -3,13 +3,14 @@ import { Megaphone } from 'lucide-vue-next';
 import { computed } from 'vue';
 import { useRouter } from 'vue-router';
 import { getPublishedAnnouncements } from '../../../stores/announcementStore';
+import type { Announcement } from '../../../types/announcement';
 
 const router = useRouter();
 
 // 获取已发布的公告（最多显示3条）
 const announcements = computed(() => {
   const published = getPublishedAnnouncements();
-  return published.slice(0, 3).map((ann: any) => {
+  return published.slice(0, 3).map((ann: Announcement) => {
     // 根据标题内容判断类型
     let type = '系统通知';
     let typeColor = 'text-amber-400';
