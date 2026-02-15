@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import { ref, computed, watch } from 'vue'
 import { Search, Plus, Edit, Trash2, X, Save, ChevronLeft, ChevronRight } from 'lucide-vue-next'
-import { teamStore, updateTeam, deleteTeam, createTeam } from '../../stores/teamStore'
-import type { Team } from '../../types/team'
-import { users as mockUsers } from '../../mock/users'
-import type { User } from '../../types/user'
+import { teamStore, updateTeam, deleteTeam, createTeam } from '../../../stores/teamStore'
+import type { Team } from '../../../types/team'
+import { users as mockUsers } from '../../../mock/users'
+import type { User } from '../../../types/user'
 
 // ========== 队伍管理相关逻辑 ==========
 // 使用共享的队伍数据

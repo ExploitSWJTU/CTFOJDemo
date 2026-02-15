@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { ref, computed, watch } from 'vue'
 import { Search, Plus, Edit, Trash2, X, Save, ChevronLeft, ChevronRight } from 'lucide-vue-next'
-import type { User, UserRole } from '../../types/user'
-import { users as mockUsers } from '../../mock/users'
+import type { User, UserRole } from '../../../types/user'
+import { users as mockUsers } from '../../../mock/users'
 
 // ========== 用户管理相关逻辑 ==========
 // 用户列表

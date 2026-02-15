@@ -62,7 +62,7 @@ const activeTab = computed(() => {
               <LayoutDashboard :size="22" class="transition-transform group-hover:scale-110" />
               
               <div class="absolute left-14 px-4 py-2 rounded-xl bg-slate-900 dark:bg-blue-600 text-white text-sm font-bold whitespace-nowrap opacity-0 -translate-x-3 pointer-events-none transition-all group-hover:opacity-100 group-hover:translate-x-0 z-50 shadow-2xl">
-                总览 Dashboard
+                总览
                 <div class="absolute top-1/2 -left-1.5 -translate-y-1/2 w-3 h-3 bg-current rotate-45" />
               </div>
             </router-link>

@@ -1,16 +1,12 @@
 <script setup lang="ts">
 import { ref, computed, onMounted, onBeforeUnmount } from 'vue'
-import { useRoute, useRouter } from 'vue-router'
+import { useRouter } from 'vue-router'
 import Vditor from 'vditor'
 import 'vditor/dist/index.css'
 import { Save, ArrowLeft } from 'lucide-vue-next'
-import { contestStore, updateContest, type ContestType } from '../../stores/contestStore'
+import { createContest, type ContestType } from '../../../stores/contestStore'
 
-const route = useRoute()
 const router = useRouter()
-
-const contestId = computed(() => Number(route.params.id))
-const contest = computed(() => contestStore.contests.find((c) => c.id === contestId.value))
 
 // 编辑表单数据
 const formData = ref({
@@ -35,6 +31,44 @@ const isDarkMode = computed(() => {
   return document.documentElement.classList.contains('dark')
 })
 
+// 初始化 Vditor
+onMounted(() => {
+  if (editorContainer.value) {
+    vditorRef.value = new Vditor(editorContainer.value, {
+      height: window.innerHeight - 400,
+      placeholder: '输入 Markdown 格式的赛事介绍...',
+      toolbarConfig: {
+        pin: true,
+      },
+      cache: {
+        enable: false,
+      },
+      mode: 'sv', // 分屏模式：左侧编辑，右侧预览
+      preview: {
+        mode: 'both', // 显示编辑和预览
+        actions: ['desktop', 'tablet', 'mobile'],
+      },
+      value: '',
+      theme: isDarkMode.value ? 'dark' : 'classic',
+      upload: {
+        accept: 'image/*',
+        handler: () => {
+          // 可以在这里实现图片上传功能
+          return Promise.resolve('')
+        },
+      },
+    })
+  }
+})
+
+// 清理 Vditor 实例
+onBeforeUnmount(() => {
+  if (vditorRef.value) {
+    vditorRef.value.destroy()
+    vditorRef.value = null
+  }
+})
+
 // 处理图片选择
 const handleImageSelect = (event: Event) => {
   const target = event.target as HTMLInputElement
@@ -51,82 +85,53 @@ const handleImageSelect = (event: Event) => {
   }
 }
 
-// 初始化表单数据和 Vditor
-onMounted(() => {
-  if (contest.value) {
-    // 初始化表单数据
-    formData.value = {
-      name: contest.value.name || '',
-      brief: contest.value.brief || '',
-      startTime: contest.value.startTime || '',
-      endTime: contest.value.endTime || '',
-      type: contest.value.type || 'individual',
-      imageUrl: contest.value.imageUrl || '',
-    }
-    // 初始化图片预览
-    imagePreview.value = contest.value.imageUrl || ''
+// 创建比赛
+const handleCreate = () => {
+  if (!vditorRef.value) return
 
-    // 初始化 Vditor
-    if (editorContainer.value) {
-      vditorRef.value = new Vditor(editorContainer.value, {
-        height: window.innerHeight - 400,
-        placeholder: '输入 Markdown 格式的赛事介绍...',
-        toolbarConfig: {
-          pin: true,
-        },
-        cache: {
-          enable: false,
-        },
-        mode: 'sv', // 分屏模式：左侧编辑，右侧预览
-        preview: {
-          mode: 'both', // 显示编辑和预览
-          actions: ['desktop', 'tablet', 'mobile'],
-        },
-        value: contest.value.description || '',
-        theme: isDarkMode.value ? 'dark' : 'classic',
-        upload: {
-          accept: 'image/*',
-          handler: () => {
-            // 可以在这里实现图片上传功能
-            return Promise.resolve('')
-          },
-        },
-      })
-    }
+  // 验证必填字段
+  if (!formData.value.name.trim()) {
+    alert('请输入比赛标题')
+    return
   }
-})
-
-// 清理 Vditor 实例
-onBeforeUnmount(() => {
-  if (vditorRef.value) {
-    vditorRef.value.destroy()
-    vditorRef.value = null
+  if (!formData.value.brief.trim()) {
+    alert('请输入比赛简介')
+    return
   }
-})
+  if (!formData.value.startTime.trim()) {
+    alert('请输入开始时间')
+    return
+  }
+  if (!formData.value.endTime.trim()) {
+    alert('请输入结束时间')
+    return
+  }
+  if (!formData.value.imageUrl) {
+    alert('请上传比赛海报')
+    return
+  }
 
-// 保存
-const saveDescription = () => {
-  if (!contest.value || !vditorRef.value) return
-
-  if (confirm('确定要保存修改吗？')) {
+  if (confirm('确定要创建比赛吗？')) {
     // 获取 Vditor 的内容
-    const content = vditorRef.value.getValue()
-    // 更新共享数据
-    const success = updateContest(contestId.value, {
+    const description = vditorRef.value.getValue() || ''
+    
+    // 创建比赛
+    const newContest = createContest({
       name: formData.value.name,
       brief: formData.value.brief,
-      description: content,
+      description: description,
       startTime: formData.value.startTime,
       endTime: formData.value.endTime,
       type: formData.value.type,
       imageUrl: formData.value.imageUrl,
     })
-    if (success) {
-      alert('保存成功！')
-      // 保存后返回比赛列表
+
+    if (newContest) {
+      alert('创建成功！')
+      // 跳转到比赛列表
       router.push('/admin/manage/contest')
     } else {
-      alert('保存失败，未找到对应的比赛')
+      alert('创建失败，请重试')
     }
   }
 }
@@ -139,19 +144,13 @@ const goBack = () => {
 
 <template>
   <div class="min-h-[calc(100vh-64px)] space-y-4">
-    <div v-if="contest" class="space-y-4">
+    <div class="space-y-4">
       <!-- 头部操作栏 -->
       <div class="flex items-center justify-between">
-        <div class="space-y-2">
+        <div>
           <h1 class="text-2xl font-bold text-slate-900 dark:text-slate-50">
-            编辑赛事介绍
+            新建比赛
           </h1>
-          <div class="inline-flex items-center gap-2 rounded-lg bg-slate-100 px-3 py-1.5 dark:bg-slate-800">
-            <span class="text-xs font-medium text-slate-500 dark:text-slate-400">赛事名称：</span>
-            <span class="text-sm font-semibold text-slate-700 dark:text-slate-200">
-              {{ contest.name }}
-            </span>
-          </div>
         </div>
         <div class="flex items-center gap-3">
           <button
@@ -165,10 +164,10 @@ const goBack = () => {
           <button
             type="button"
             class="inline-flex items-center gap-2 rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white transition hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 dark:focus:ring-offset-slate-950"
-            @click="saveDescription"
+            @click="handleCreate"
           >
             <Save class="h-4 w-4" />
-            保存
+            创建
           </button>
         </div>
       </div>
@@ -289,14 +288,6 @@ const goBack = () => {
           />
         </div>
       </div>
-    </div>
-
-    <!-- 未找到比赛 -->
-    <div
-      v-else
-      class="flex min-h-50 items-center justify-center rounded-xl border border-dashed border-slate-300 bg-white/60 text-sm text-slate-500 dark:border-slate-700 dark:bg-slate-900/70 dark:text-slate-400"
-    >
-      未找到对应的赛事信息。
     </div>
   </div>
 </template>

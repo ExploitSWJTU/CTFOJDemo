@@ -6,8 +6,8 @@ import {
   updateAnnouncement,
   createAnnouncement,
   deleteAnnouncement,
-} from '../../stores/announcementStore'
-import type { Announcement } from '../../types/announcement'
+} from '../../../stores/announcementStore'
+import type { Announcement } from '../../../types/announcement'
 
 // ========== 公告管理相关逻辑 ==========
 // 使用共享的公告数据
