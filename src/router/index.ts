@@ -65,6 +65,11 @@ const router = createRouter({
           component: () => import('../views/admin/AdminHomeView.vue'),
         },
         {
+          path: 'home-manage',
+          name: 'adminManageHomeManage',
+          component: () => import('../views/admin/AdminHomeManageView.vue'),
+        },
+        {
           path: 'training',
           name: 'adminManageTraining',
           component: () => import('../views/admin/AdminTrainingView.vue'),
