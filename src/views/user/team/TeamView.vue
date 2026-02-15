@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue'
 import { Users, Copy, Check, X, Edit, Save } from 'lucide-vue-next'
-import { createTeam, joinTeamByInviteCode, getUserTeams, leaveTeam, updateTeam } from '../stores/teamStore'
-import type { Team } from '../types/team'
+import { createTeam, joinTeamByInviteCode, getUserTeams, leaveTeam, updateTeam } from '../../../stores/teamStore'
+import type { Team } from '../../../types/team'
 
 // 当前用户ID（模拟，实际应该从登录状态获取）
 const currentUserId = ref(2) // 假设当前用户是lisi

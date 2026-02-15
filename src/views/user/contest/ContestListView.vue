@@ -2,8 +2,8 @@
 import { ref, computed, watch, onMounted } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { Search, Users, ExternalLink } from 'lucide-vue-next';
-import { contestStore, type ContestStatus } from '../stores/contestStore';
-import { teamStore } from '../stores/teamStore';
+import { contestStore, type ContestStatus } from '../../../stores/contestStore';
+import { teamStore } from '../../../stores/teamStore';
 
 const route = useRoute();
 const router = useRouter();

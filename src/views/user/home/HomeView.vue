@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import Banner from '../components/Banner.vue';
-import Announcements from '../components/Announcements.vue';
-import CheckIn from '../components/CheckIn.vue';
-import ActivityFeed from '../components/ActivityFeed.vue';
-import Sidebar from '../components/Sidebar.vue';
+import Banner from '../../../components/user/home/Banner.vue';
+import Announcements from '../../../components/user/home/Announcements.vue';
+import CheckIn from '../../../components/user/home/CheckIn.vue';
+import ActivityFeed from '../../../components/user/home/ActivityFeed.vue';
+import Sidebar from '../../../components/user/training/Sidebar.vue';
 </script>
 
 <template>

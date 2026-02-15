@@ -2,7 +2,7 @@
 import { computed } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { ArrowLeft } from 'lucide-vue-next'
-import { getAnnouncement } from '../stores/announcementStore'
+import { getAnnouncement } from '../../../stores/announcementStore'
 
 const route = useRoute()
 const router = useRouter()

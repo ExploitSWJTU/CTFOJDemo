@@ -2,7 +2,7 @@
 import { ref, computed, watch, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { ChevronLeft, ChevronRight } from 'lucide-vue-next'
-import { getPublishedAnnouncements } from '../stores/announcementStore'
+import { getPublishedAnnouncements } from '../../../stores/announcementStore'
 
 const route = useRoute()
 const router = useRouter()

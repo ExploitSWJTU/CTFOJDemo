@@ -15,10 +15,10 @@ import {
   Megaphone,
 } from 'lucide-vue-next';
 import MarkdownIt from 'markdown-it';
-import { challenges as mockChallenges } from '../mock/challenges';
-import type { Challenge, Category, Difficulty } from '../types/challenge';
-import ChallengeCard from '../components/ChallengeCard.vue';
-import { CATEGORIES, CATEGORY_MAP } from '../constants/category';
+import { challenges as mockChallenges } from '../../../mock/challenges';
+import type { Challenge, Category, Difficulty } from '../../../types/challenge';
+import ChallengeCard from '../../../components/user/training/ChallengeCard.vue';
+import { CATEGORIES, CATEGORY_MAP } from '../../../constants/category';
 import VChart from 'vue-echarts';
 import { use } from 'echarts/core';
 import { CanvasRenderer } from 'echarts/renderers';

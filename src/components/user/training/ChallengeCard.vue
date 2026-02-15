@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { User, Trophy, CircleCheckBig } from 'lucide-vue-next';
-import type { Challenge } from '../types/challenge';
-import { CATEGORY_MAP } from '../constants/category';
+import type { Challenge } from '../../../types/challenge';
+import { CATEGORY_MAP } from '../../../constants/category';
 import { computed } from 'vue';
 
 const props = defineProps<{

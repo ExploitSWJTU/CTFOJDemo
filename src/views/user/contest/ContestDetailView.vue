@@ -4,7 +4,7 @@ import { useRoute, useRouter } from 'vue-router'
 import { ArrowLeft } from 'lucide-vue-next'
 import Vditor from 'vditor'
 import 'vditor/dist/index.css'
-import { contestStore, type ContestStatus } from '../stores/contestStore'
+import { contestStore, type ContestStatus } from '../../../stores/contestStore'
 
 const statusLabel: Record<ContestStatus, string> = {
   ongoing: '进行中',

@@ -1,56 +1,63 @@
 import { createRouter, createWebHistory } from 'vue-router';
-import HomeView from '../views/HomeView.vue';
 
 const router = createRouter({
   history: createWebHistory(),
   routes: [
+    // 用户端路由
     {
       path: '/',
-      name: 'home',
-      component: HomeView,
-    },
-    {
-      path: '/training',
-      name: 'training',
-      component: () => import('../views/TrainingView.vue'),
-    },
-    {
-      path: '/contest',
-      name: 'contest',
-      component: () => import('../views/ContestListView.vue'),
-    },
-    {
-      path: '/contest/:id',
-      name: 'contestDetail',
-      component: () => import('../views/ContestDetailView.vue'),
-    },
-    {
-      path: '/team',
-      name: 'team',
-      component: () => import('../views/TeamView.vue'),
-    },
-    {
-      path: '/forum',
-      name: 'forum',
-      component: () => import('../views/ForumView.vue'),
-    },
-    {
-      path: '/announcement',
-      name: 'announcement',
-      component: () => import('../views/AnnouncementListView.vue'),
-    },
-    {
-      path: '/announcement/:id',
-      name: 'announcementDetail',
-      component: () => import('../views/AnnouncementDetailView.vue'),
-    },
-    {
-      path: '/admin/manage',
-      component: () => import('../views/AdminManageView.vue'),
+      component: () => import('../layouts/UserLayout.vue'),
       children: [
         {
           path: '',
-          redirect: '/admin/manage/training',
+          name: 'home',
+          component: () => import('../views/user/home/HomeView.vue'),
+        },
+        {
+          path: 'training',
+          name: 'training',
+          component: () => import('../views/user/training/TrainingView.vue'),
+        },
+        {
+          path: 'contest',
+          name: 'contest',
+          component: () => import('../views/user/contest/ContestListView.vue'),
+        },
+        {
+          path: 'contest/:id',
+          name: 'contestDetail',
+          component: () => import('../views/user/contest/ContestDetailView.vue'),
+        },
+        {
+          path: 'team',
+          name: 'team',
+          component: () => import('../views/user/team/TeamView.vue'),
+        },
+        {
+          path: 'forum',
+          name: 'forum',
+          component: () => import('../views/user/forum/ForumView.vue'),
+        },
+        {
+          path: 'announcement',
+          name: 'announcement',
+          component: () => import('../views/user/announcement/AnnouncementListView.vue'),
+        },
+        {
+          path: 'announcement/:id',
+          name: 'announcementDetail',
+          component: () => import('../views/user/announcement/AnnouncementDetailView.vue'),
+        },
+      ],
+    },
+    // 管理端路由
+    {
+      path: '/admin/manage',
+      component: () => import('../layouts/AdminLayout.vue'),
+      children: [
+        {
+          path: '',
+          redirect: '/admin/manage/home',
         },
         {
           path: 'home',
