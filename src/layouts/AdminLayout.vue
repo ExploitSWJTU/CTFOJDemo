@@ -8,11 +8,11 @@ import {
   Flag,
   MessageSquare,
   Users,
-  Bell,
-  Settings,
   ShieldAlert,
   Container,
-  Group,
+  User,
+  Megaphone,
+  ScrollText,
 } from 'lucide-vue-next';
 import AdminHeader from '../components/admin/AdminHeader.vue';
 
@@ -23,12 +23,12 @@ const menuItems = [
   { name: '训练题目', path: '/admin/manage/training', icon: Swords },
   { name: '赛事管理', path: '/admin/manage/contest', icon: Flag },
   { name: '论坛管理', path: '/admin/manage/forum', icon: MessageSquare },
-  { name: '用户管理', path: '/admin/manage/user', icon: Users },
-  { name: '队伍管理', path: '/admin/manage/team', icon: Group },
+  { name: '用户管理', path: '/admin/manage/user', icon: User },
+  { name: '队伍管理', path: '/admin/manage/team', icon: Users },
   { name: '容器实例', path: '/admin/manage/instance', icon: Container },
-  { name: '系统公告', path: '/admin/manage/announcement', icon: Bell },
+  { name: '系统公告', path: '/admin/manage/announcement', icon: Megaphone },
   { name: '系统日志', path: '/admin/manage/log', icon: ShieldAlert },
-  { name: '全局设置', path: '/admin/manage/setting', icon: Settings },
+  { name: '全局设置', path: '/admin/manage/setting', icon: ScrollText },
 ];
 
 const activeTab = computed(() => {
@@ -43,10 +43,8 @@ const activeTab = computed(() => {
     <AdminHeader />
     
     <div class="flex flex-1">
-      <!-- 侧边栏：紧凑型、全高度边框 -->
       <aside class="w-16 shrink-0 border-r border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900">
         <div class="sticky top-16 flex flex-col items-center py-4 gap-2">
-          <!-- 顶部总览 (原 Shield 转换) -->
           <div class="mb-4 pb-4 border-b border-slate-100 dark:border-slate-800 w-full flex justify-center">
             <router-link
               to="/admin/manage/home"
