@@ -7,7 +7,6 @@ import {
   Swords,
   Flag,
   MessageSquare,
-  Users,
   Search,
   Box,
   Clock,
@@ -96,7 +95,7 @@ const containers = ref([
             class="rounded-button flex h-9 w-9 items-center justify-center transition-all"
             :class="
               route.path === '/'
-                ? 'bg-blue-600 text-white shadow-md shadow-blue-200 dark:shadow-none'
+                ? 'font-bold text-blue-600 dark:text-blue-400'
                 : 'text-slate-500 hover:bg-slate-50 dark:text-slate-400 dark:hover:bg-slate-800'
             "
           >
@@ -122,27 +121,13 @@ const containers = ref([
             to="/contest"
             class="rounded-button flex items-center gap-2 px-4 py-2 text-sm font-medium transition-all"
             :class="
-              route.path === '/contest'
+              route.path.startsWith('/contest')
                 ? 'font-bold text-blue-600 dark:text-blue-400'
                 : 'text-slate-500 hover:bg-slate-50 dark:text-slate-400 dark:hover:bg-slate-800'
             "
           >
             <Flag :size="16" />
             赛事
-          </router-link>
-
-          <!-- 队伍 -->
-          <router-link
-            to="/team"
-            class="rounded-button flex items-center gap-2 px-4 py-2 text-sm font-medium transition-all"
-            :class="
-              route.path === '/team'
-                ? 'font-bold text-blue-600 dark:text-blue-400'
-                : 'text-slate-500 hover:bg-slate-50 dark:text-slate-400 dark:hover:bg-slate-800'
-            "
-          >
-            <Users :size="16" />
-            队伍
           </router-link>
 
           <!-- 论坛 -->

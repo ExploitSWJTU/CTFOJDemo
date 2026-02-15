@@ -26,6 +26,19 @@ const isAdmin = computed(() => route.path.startsWith('/admin'));
 
 body {
   font-family: 'Inter', sans-serif;
+  /* 移除 Arco 下拉框/气泡的外层默认边框 */
+  --color-border-1: transparent;
+  --color-bg-popup: transparent;
+}
+
+/* 彻底消除 Arco Dropdown 的默认包裹样式 */
+.arco-dropdown,
+.arco-dropdown-list,
+.arco-dropdown-list-wrapper {
+  padding: 0 !important;
+  background-color: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
 }
 
 .dark body {
@@ -39,7 +52,8 @@ body {
   --color-text-2: #e2e8f0;
   --color-text-3: #cbd5e1;
   --color-text-4: #94a3b8;
-  --color-border-1: #1e293b;
+  /* 确保深色模式下也不会出现多余边框 */
+  --color-border-1: transparent;
   --color-border-2: #334155;
   --color-border-3: #475569;
   --color-border-4: #64748b;
