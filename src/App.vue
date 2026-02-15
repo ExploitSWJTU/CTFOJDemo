@@ -23,19 +23,19 @@ body {
 }
 
 .dark body {
-  --color-bg-1: #0f172a;
-  --color-bg-2: #1e293b;
+  --color-bg-1: var(--color-app-bg);
+  --color-bg-2: var(--color-app-card);
   --color-bg-3: #334155;
   --color-bg-4: #475569;
   --color-bg-5: #64748b;
-  --color-bg-white: #0f172a;
-  --color-text-1: #f8fafc;
+  --color-bg-white: var(--color-app-bg);
+  --color-text-1: var(--color-app-text);
   --color-text-2: #e2e8f0;
   --color-text-3: #cbd5e1;
-  --color-text-4: #94a3b8;
+  --color-text-4: var(--color-app-text-muted);
   /* 确保深色模式下也不会出现多余边框 */
   --color-border-1: transparent;
-  --color-border-2: #334155;
+  --color-border-2: var(--color-app-border);
   --color-border-3: #475569;
   --color-border-4: #64748b;
   --color-bg-popup: transparent;
