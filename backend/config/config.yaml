@@ -1,0 +1,32 @@
+# Server configuration
+server:
+  port: 8080
+  mode: debug  # debug | release
+
+# Database (PostgreSQL)
+database:
+  host: localhost
+  port: 5432
+  user: postgres
+  password: changeme
+  dbname: ctfoj
+  sslmode: disable
+
+# Redis
+redis:
+  host: localhost
+  port: 6379
+  password: ""
+  db: 0
+
+# JWT
+jwt:
+  secret: your-jwt-secret-key
+  expire: 24h
+
+# Docker
+docker:
+  host: unix:///var/run/docker.sock
+  container_expire: 1h       # Default container lifetime
+  port_range_start: 30000
+  port_range_end: 40000
