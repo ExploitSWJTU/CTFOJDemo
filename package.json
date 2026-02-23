@@ -1,0 +1,39 @@
+{
+  "name": "swjtu-ctf-oj",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "pnpm --dir frontend dev",
+    "build": "pnpm --dir frontend build",
+    "lint": "pnpm lint:frontend",
+    "lint:frontend": "pnpm --dir frontend lint",
+    "lint:fix": "pnpm --dir frontend lint:fix",
+    "lint:backend": "cd backend && go fmt ./...",
+    "type-check": "pnpm type-check:frontend",
+    "type-check:frontend": "pnpm --dir frontend type-check",
+    "type-check:backend": "cd backend && go vet ./...",
+    "check": "pnpm type-check && pnpm lint",
+    "check:all": "pnpm type-check:frontend && pnpm type-check:backend && pnpm lint:frontend",
+    "postinstall": "simple-git-hooks"
+  },
+  "simple-git-hooks": {
+    "pre-commit": "node scripts/pre-commit.mjs"
+  },
+  "lint-staged": {
+    "frontend/**/*.{ts,tsx,vue}": [
+      "pnpm --dir frontend lint"
+    ],
+    "frontend/**/*.{ts,tsx,vue,js,jsx}": [
+      "pnpm --dir frontend type-check"
+    ],
+    "backend/**/*.go": [
+      "cd backend && go fmt ./...",
+      "cd backend && go vet ./..."
+    ]
+  },
+  "devDependencies": {
+    "lint-staged": "^16.2.7",
+    "simple-git-hooks": "^2.13.1"
+  }
+}

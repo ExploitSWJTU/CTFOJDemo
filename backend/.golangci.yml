@@ -1,0 +1,32 @@
+# .golangci.yml - Go linter configuration
+# Install: go install github.com/golangci/golangci-lint/cmd/golangci-lint@latest
+
+run:
+  timeout: 5m
+  modules-download-mode: readonly
+
+linters:
+  enable:
+    - gofmt
+    - govet
+    - gosimple
+    - staticcheck
+    - ineffassign
+    - misspell
+    - revive
+    - unconvert
+  disable-all: false
+
+linters-settings:
+  gofmt:
+    simplify: true
+  revive:
+    rules:
+      - name: exported
+        arguments:
+          - disableStutteringCheck
+
+issues:
+  exclude-use-default: false
+  max-issues-per-linter: 0
+  max-same-issues: 0

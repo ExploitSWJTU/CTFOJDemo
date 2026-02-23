@@ -48,3 +48,13 @@ docker-compose.override.yml
 # ========================
 .DS_Store
 Thumbs.db
+
+# Development
+node_modules/
+*.log
+
+# IDE
+.idea/
+*.swp
+*.swo
+*~
