@@ -44,8 +44,8 @@ const filteredUsers = computed(() => {
       (user) =>
         user.username.toLowerCase().includes(query) ||
         user.email.toLowerCase().includes(query) ||
-        user.realName.toLowerCase().includes(query) ||
-        user.studentId.toLowerCase().includes(query)
+        user.realName?.toLowerCase().includes(query) ||
+        user.studentId?.toLowerCase().includes(query)
     )
   }
   return result
@@ -172,6 +172,7 @@ const saveUser = () => {
       studentId: formData.value.studentId || '',
       role: (formData.value.role || 'user') as UserRole,
       avatar: formData.value.avatar || `https://api.dicebear.com/7.x/avataaars/svg?seed=${formData.value.username}`,
+      score: 0,
     }
     userList.value.push(newUser)
   }

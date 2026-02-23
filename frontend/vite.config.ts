@@ -4,6 +4,7 @@ import tailwindcss from '@tailwindcss/vite';
 import AutoImport from 'unplugin-auto-import/vite';
 import Components from 'unplugin-vue-components/vite';
 import { ArcoResolver } from 'unplugin-vue-components/resolvers';
+import { resolve } from 'path';
 
 // https://vite.dev/config/
 export default defineConfig({
@@ -23,4 +24,9 @@ export default defineConfig({
       ],
     }),
   ],
+  resolve: {
+    alias: {
+      '@': resolve(__dirname, 'src'),
+    },
+  },
 });

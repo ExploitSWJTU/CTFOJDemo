@@ -8,6 +8,7 @@ export const users: User[] = [
     realName: '管理员',
     studentId: 'ADMIN001',
     role: 'admin',
+    score: 0,
     avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=admin',
   },
   {
@@ -17,6 +18,7 @@ export const users: User[] = [
     realName: '张三',
     studentId: '2021001001',
     role: 'user',
+    score: 0,
     avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=zhangsan',
   },
   {
@@ -26,6 +28,7 @@ export const users: User[] = [
     realName: '李四',
     studentId: '2021001002',
     role: 'user',
+    score: 0,
     avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=lisi',
   },
   {
@@ -35,6 +38,7 @@ export const users: User[] = [
     realName: '王五',
     studentId: '2021001003',
     role: 'user',
+    score: 0,
     avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=wangwu',
   },
   {
@@ -44,6 +48,7 @@ export const users: User[] = [
     realName: '赵六',
     studentId: '2021001004',
     role: 'user',
+    score: 0,
     avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=zhaoliu',
   },
   {
@@ -53,6 +58,7 @@ export const users: User[] = [
     realName: '孙七',
     studentId: '2021001005',
     role: 'user',
+    score: 0,
     avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=sunqi',
   },
   {
@@ -62,6 +68,7 @@ export const users: User[] = [
     realName: '周八',
     studentId: '2021001006',
     role: 'user',
+    score: 0,
     avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=zhouba',
   },
   {
@@ -71,6 +78,7 @@ export const users: User[] = [
     realName: '吴九',
     studentId: '2021001007',
     role: 'user',
+    score: 0,
     avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=wujiu',
   },
   {
@@ -80,6 +88,7 @@ export const users: User[] = [
     realName: '郑十',
     studentId: '2021001008',
     role: 'user',
+    score: 0,
     avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=zhengshi',
   },
   {
@@ -89,6 +98,7 @@ export const users: User[] = [
     realName: '王十一',
     studentId: '2021001009',
     role: 'user',
+    score: 0,
     avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=wangshiyi',
   },
   {
@@ -98,6 +108,7 @@ export const users: User[] = [
     realName: '冯十二',
     studentId: '2021001010',
     role: 'user',
+    score: 0,
     avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=fengshier',
   },
   {
@@ -107,6 +118,7 @@ export const users: User[] = [
     realName: '陈十三',
     studentId: '2021001011',
     role: 'user',
+    score: 0,
     avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=chenshisan',
   },
   {
@@ -116,6 +128,7 @@ export const users: User[] = [
     realName: '褚十四',
     studentId: '2021001012',
     role: 'user',
+    score: 0,
     avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=chushisi',
   },
   {
@@ -125,6 +138,7 @@ export const users: User[] = [
     realName: '卫十五',
     studentId: '2021001013',
     role: 'user',
+    score: 0,
     avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=weishiwu',
   },
   {
@@ -134,6 +148,7 @@ export const users: User[] = [
     realName: '蒋十六',
     studentId: '2021001014',
     role: 'user',
+    score: 0,
     avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=jiangshiliu',
   },
   {
@@ -143,6 +158,7 @@ export const users: User[] = [
     realName: '沈十七',
     studentId: '2021001015',
     role: 'user',
+    score: 0,
     avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=shenshigi',
   },
   {
@@ -152,6 +168,7 @@ export const users: User[] = [
     realName: '韩十八',
     studentId: '2021001016',
     role: 'user',
+    score: 0,
     avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=hanshiba',
   },
   {
@@ -161,6 +178,7 @@ export const users: User[] = [
     realName: '杨十九',
     studentId: '2021001017',
     role: 'user',
+    score: 0,
     avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=yangshijiu',
   },
   {
@@ -170,6 +188,7 @@ export const users: User[] = [
     realName: '朱二十',
     studentId: '2021001018',
     role: 'user',
+    score: 0,
     avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=zhushier',
   },
   {
@@ -179,6 +198,7 @@ export const users: User[] = [
     realName: '秦二一',
     studentId: '2021001019',
     role: 'user',
+    score: 0,
     avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=qinshiyi',
   },
   {
@@ -188,6 +208,7 @@ export const users: User[] = [
     realName: '尤二二',
     studentId: '2021001020',
     role: 'user',
+    score: 0,
     avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=youshier',
   },
   {
@@ -197,6 +218,7 @@ export const users: User[] = [
     realName: '许二三',
     studentId: '2021001021',
     role: 'user',
+    score: 0,
     avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=xushisan',
   },
   {
@@ -206,6 +228,7 @@ export const users: User[] = [
     realName: '何二四',
     studentId: '2021001022',
     role: 'user',
+    score: 0,
     avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=heshisi',
   },
   {
@@ -215,6 +238,7 @@ export const users: User[] = [
     realName: '吕二五',
     studentId: '2021001023',
     role: 'user',
+    score: 0,
     avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=lvshiwu',
   },
   {
@@ -224,6 +248,7 @@ export const users: User[] = [
     realName: '施二六',
     studentId: '2021001024',
     role: 'user',
+    score: 0,
     avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=shishiliu',
   },
 ];

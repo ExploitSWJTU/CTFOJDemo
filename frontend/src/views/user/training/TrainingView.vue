@@ -15,10 +15,11 @@ import {
   Megaphone,
 } from 'lucide-vue-next';
 import MarkdownIt from 'markdown-it';
-import { challenges as mockChallenges } from '../../../mock/challenges';
-import type { Challenge, Category, Difficulty } from '../../../types/challenge';
-import ChallengeCard from '../../../components/user/training/ChallengeCard.vue';
-import { CATEGORIES, CATEGORY_MAP } from '../../../constants/category';
+import { useChallengeStore } from '@/stores/challenge';
+import { getChallenge } from '@/api/challenge';
+import type { Category, Difficulty } from '@/types/challenge';
+import ChallengeCard from '@/components/user/training/ChallengeCard.vue';
+import { CATEGORIES, CATEGORY_MAP } from '@/constants/category';
 import VChart from 'vue-echarts';
 import { use } from 'echarts/core';
 import { CanvasRenderer } from 'echarts/renderers';
@@ -35,14 +36,15 @@ const md = new MarkdownIt({
   typographer: true,
 });
 
+// Use Pinia store
+const challengeStore = useChallengeStore();
+
 // State
-const challenges = ref<Challenge[]>(mockChallenges);
 const selectedCategory = ref<Category | 'All'>('All');
 const searchQuery = ref('');
 const selectedDifficulty = ref<Difficulty | 'All'>('All');
 const hideSolved = ref(false);
 const detailVisible = ref(false);
-const currentChallenge = ref<Challenge | null>(null);
 const flagInput = ref('');
 const submitting = ref(false);
 const isSidebarCollapsed = ref(false);
@@ -59,9 +61,17 @@ onMounted(() => {
   checkWidth();
   window.addEventListener('resize', checkWidth);
   return () => window.removeEventListener('resize', checkWidth);
+  
+  // Fetch challenges from API
+  loadChallenges();
 });
 
 const difficulties: (Difficulty | 'All')[] = ['All', 'Easy', 'Medium', 'Hard'];
+
+// Load challenges from API
+async function loadChallenges() {
+  await challengeStore.fetchChallenges();
+}
 
 // Training Announcements
 const trainingAnnouncements = [
@@ -72,7 +82,7 @@ const trainingAnnouncements = [
 
 // Radar Chart Data
 const radarOption = computed(() => {
-  const indicators = CATEGORIES.filter((cat) => cat.label !== 'All').map((cat) => {
+  const indicators = CATEGORIES.filter((cat: typeof CATEGORIES[0]) => cat.label !== 'All').map((cat: typeof CATEGORIES[0]) => {
     // Extract hex color from the inactive sidebar style
     const colorMatch = cat.sidebar.inactive.match(/text-\[(#[A-Z0-9]+)\]/i);
     const color = colorMatch ? colorMatch[1] : '#86909C';
@@ -126,9 +136,9 @@ const getCategoryClass = (cat: (typeof CATEGORIES)[0]) => {
   return active ? cfg.active : cfg.inactive;
 };
 
-// Filtering and Sorting
+// Filtering and Sorting - use store challenges
 const filteredChallenges = computed(() => {
-  const result = challenges.value.filter((c) => {
+  const result = challengeStore.challenges.filter((c: any) => {
     const matchCategory = selectedCategory.value === 'All' || c.category === selectedCategory.value;
     const matchSearch =
       c.title.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
@@ -151,62 +161,90 @@ const filteredChallenges = computed(() => {
 });
 
 // Actions
-const openDetail = (id: number) => {
-  const challenge = challenges.value.find((c) => c.id === id);
+const openDetail = async (id: number) => {
+  const challenge = challengeStore.challenges.find((c) => c.id === id);
   if (challenge) {
-    currentChallenge.value = challenge;
+    challengeStore.setCurrentChallenge(challenge);
     detailVisible.value = true;
     flagInput.value = '';
+    
+    // Fetch full challenge details from API
+    try {
+      const detail = await getChallenge(id);
+      challengeStore.setCurrentChallenge(detail);
+    } catch (error) {
+      console.error('Failed to fetch challenge detail:', error);
+    }
   }
 };
 
-const startContainer = () => {
-  if (!currentChallenge.value) return;
-  currentChallenge.value.containerState = 'loading';
-  setTimeout(() => {
-    if (currentChallenge.value) {
-      currentChallenge.value.containerState = 'running';
-      currentChallenge.value.containerInfo = {
+const startContainer = async () => {
+  const challenge = challengeStore.currentChallenge;
+  if (!challenge) return;
+  
+  challengeStore.updateContainerState(challenge.id, 'loading');
+  
+  try {
+    // TODO: Call API to start container
+    // const response = await api.startContainer(challenge.id);
+    // challengeStore.updateContainerState(challenge.id, 'running', response.data);
+    
+    // Mock for now
+    setTimeout(() => {
+      challengeStore.updateContainerState(challenge.id, 'running', {
         ip: '10.10.10.101',
         port: Math.floor(Math.random() * 50000) + 10000,
         timeLeft: '01:00:00',
-      };
-    }
-  }, 2000);
-};
-
-const destroyContainer = () => {
-  if (!currentChallenge.value) return;
-  currentChallenge.value.containerState = 'idle';
-  currentChallenge.value.containerInfo = undefined;
-};
-
-const extendTime = () => {
-  if (currentChallenge.value?.containerInfo) {
-    currentChallenge.value.containerInfo.timeLeft = '01:00:00';
+      });
+    }, 2000);
+  } catch (error) {
+    console.error('Failed to start container:', error);
+    challengeStore.updateContainerState(challenge.id, 'idle');
   }
 };
 
-const submitFlag = () => {
-  if (!flagInput.value) return;
-  submitting.value = true;
-  setTimeout(() => {
-    submitting.value = false;
-    alert('Flag submitted! (Mock)');
-  }, 1000);
+const destroyContainer = () => {
+  const challenge = challengeStore.currentChallenge;
+  if (!challenge) return;
+  
+  challengeStore.updateContainerState(challenge.id, 'idle');
 };
 
-const copyToClipboard = (text: string) => {
-  navigator.clipboard.writeText(text);
+const extendTime = () => {
+  const challenge = challengeStore.currentChallenge;
+  if (challenge?.containerInfo) {
+    challenge.containerInfo.timeLeft = '01:00:00';
+  }
+};
+
+const submitFlag = async () => {
+  if (!flagInput.value || !challengeStore.currentChallenge) return;
+  submitting.value = true;
+  
+  try {
+    // TODO: Call API to submit flag
+    // await api.submitFlag(challengeStore.currentChallenge.id, flagInput.value);
+    
+    console.log('Flag submitted:', flagInput.value);
+    flagInput.value = '';
+  } catch (error) {
+    console.error('Flag submission failed:', error);
+  } finally {
+    submitting.value = false;
+  }
+};
+
+const copyToClipboard = async (text: string) => {
+  await navigator.clipboard.writeText(text);
 };
 
 const renderedDescription = computed(() => {
-  return currentChallenge.value ? md.render(currentChallenge.value.description) : '';
+  return challengeStore.currentChallenge ? md.render(challengeStore.currentChallenge.description) : '';
 });
 
 const currentCategoryMeta = computed(() => {
-  if (!currentChallenge.value) return null;
-  return CATEGORY_MAP[currentChallenge.value.category];
+  if (!challengeStore.currentChallenge) return null;
+  return CATEGORY_MAP[challengeStore.currentChallenge.category];
 });
 </script>
 
@@ -448,11 +486,11 @@ const currentCategoryMeta = computed(() => {
             }}</span>
           </div>
           <div class="h-6 w-px shrink-0 bg-slate-200 dark:bg-slate-800" />
-          <span class="truncate text-lg font-bold">{{ currentChallenge?.title }}</span>
+          <span class="truncate text-lg font-bold">{{ challengeStore.currentChallenge?.title }}</span>
         </div>
       </template>
 
-      <div v-if="currentChallenge" class="flex flex-col gap-6">
+      <div v-if="challengeStore.currentChallenge" class="flex flex-col gap-6">
         <div
           class="prose prose-sm dark:prose-invert max-w-none rounded-xl border border-slate-100 bg-slate-50 p-5 dark:border-slate-800 dark:bg-slate-800/50"
         >
@@ -463,7 +501,7 @@ const currentCategoryMeta = computed(() => {
         <div
           class="rounded-xl border border-slate-200 bg-slate-50/30 p-5 dark:border-slate-700 dark:bg-slate-800/20"
         >
-          <div v-if="currentChallenge.containerState === 'idle'" class="py-2 text-center">
+          <div v-if="challengeStore.currentChallenge.containerState === 'idle'" class="py-2 text-center">
             <button
               class="inline-flex items-center gap-2 rounded-lg bg-blue-600 px-8 py-3 font-bold text-white shadow-lg shadow-blue-200 transition-transform hover:scale-105 hover:bg-blue-700 active:scale-95 dark:shadow-none"
               @click="startContainer"
@@ -476,7 +514,7 @@ const currentCategoryMeta = computed(() => {
           </div>
 
           <div
-            v-else-if="currentChallenge.containerState === 'loading'"
+            v-else-if="challengeStore.currentChallenge.containerState === 'loading'"
             class="flex flex-col items-center py-4"
           >
             <Loader2 class="mb-3 h-8 w-8 animate-spin text-blue-600" />
@@ -487,7 +525,7 @@ const currentCategoryMeta = computed(() => {
           </div>
 
           <div
-            v-else-if="currentChallenge.containerState === 'running' && currentChallenge.containerInfo"
+            v-else-if="challengeStore.currentChallenge.containerState === 'running' && challengeStore.currentChallenge.containerInfo"
             class="space-y-4"
           >
             <div
@@ -496,10 +534,10 @@ const currentCategoryMeta = computed(() => {
               <div class="flex flex-col">
                 <span class="mb-1 text-[10px] font-bold uppercase tracking-wider text-slate-400">连接地址</span>
                 <div class="flex items-center gap-2 font-mono text-base font-bold text-slate-800 dark:text-slate-100">
-                  {{ currentChallenge.containerInfo.ip }}:{{ currentChallenge.containerInfo.port }}
+                  {{ challengeStore.currentChallenge.containerInfo.ip }}:{{ challengeStore.currentChallenge.containerInfo.port }}
                   <button
                     class="text-slate-400 transition-colors hover:text-blue-600"
-                    @click="copyToClipboard(`${currentChallenge.containerInfo.ip}:${currentChallenge.containerInfo.port}`)"
+                    @click="copyToClipboard(`${challengeStore.currentChallenge.containerInfo.ip}:${challengeStore.currentChallenge.containerInfo.port}`)"
                   >
                     <Copy class="h-4 w-4" />
                   </button>
@@ -508,7 +546,7 @@ const currentCategoryMeta = computed(() => {
               <div class="text-right">
                 <span class="mb-1 text-[10px] font-bold uppercase tracking-wider text-slate-400">剩余时间</span>
                 <div class="font-mono text-lg font-bold text-red-500">
-                  {{ currentChallenge.containerInfo.timeLeft }}
+                  {{ challengeStore.currentChallenge.containerInfo.timeLeft }}
                 </div>
               </div>
             </div>
