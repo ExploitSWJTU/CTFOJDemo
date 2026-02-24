@@ -4,7 +4,12 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "pnpm --dir frontend dev",
+    "dev": "pnpm dev:all",
+    "dev:all": "pnpm dev:infra && pnpm dev:backend & pnpm dev:frontend",
+    "dev:frontend": "pnpm --dir frontend dev",
+    "dev:backend": "cd backend && air -c .air.toml",
+    "dev:backend:debug": "cd backend && dlv debug ./cmd/server --headless --listen=:2345 --api-version=2",
+    "dev:infra": "docker compose up -d db redis",
     "build": "pnpm --dir frontend build",
     "lint": "pnpm lint:frontend",
     "lint:frontend": "pnpm --dir frontend lint",

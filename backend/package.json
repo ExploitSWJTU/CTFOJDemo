@@ -1,0 +1,13 @@
+{
+  "name": "backend-scripts",
+  "private": true,
+  "scripts": {
+    "dev": "air -c .air.toml",
+    "build": "go build -o bin/server ./cmd/server",
+    "lint": "golangci-lint run",
+    "test": "go test ./...",
+    "vet": "go vet ./...",
+    "fmt": "gofmt -w .",
+    "tidy": "go mod tidy"
+  }
+}
