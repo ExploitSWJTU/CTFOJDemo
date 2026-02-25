@@ -17,7 +17,7 @@ import {
 import MarkdownIt from 'markdown-it';
 import { useChallengeStore } from '@/stores/challenge';
 import { getChallenge } from '@/api/challenge';
-import type { Category, Difficulty } from '@/types/challenge';
+import type { Category, Difficulty, Challenge } from '@/types/challenge';
 import ChallengeCard from '@/components/user/training/ChallengeCard.vue';
 import { CATEGORIES, CATEGORY_MAP } from '@/constants/category';
 import VChart from 'vue-echarts';
@@ -60,10 +60,9 @@ onMounted(() => {
   };
   checkWidth();
   window.addEventListener('resize', checkWidth);
-  return () => window.removeEventListener('resize', checkWidth);
-  
   // Fetch challenges from API
   loadChallenges();
+  return () => window.removeEventListener('resize', checkWidth);
 });
 
 const difficulties: (Difficulty | 'All')[] = ['All', 'Easy', 'Medium', 'Hard'];
@@ -138,7 +137,7 @@ const getCategoryClass = (cat: (typeof CATEGORIES)[0]) => {
 
 // Filtering and Sorting - use store challenges
 const filteredChallenges = computed(() => {
-  const result = challengeStore.challenges.filter((c: any) => {
+  const result = challengeStore.challenges.filter((c: Challenge) => {
     const matchCategory = selectedCategory.value === 'All' || c.category === selectedCategory.value;
     const matchSearch =
       c.title.toLowerCase().includes(searchQuery.value.toLowerCase()) ||

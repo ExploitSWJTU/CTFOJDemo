@@ -33,7 +33,7 @@ export async function getChallenge(id: number): Promise<Challenge> {
 /**
  * Get challenges by category
  */
-export async function getChallengesByCategory(): Promise<any> {
+export async function getChallengesByCategory(): Promise<unknown> {
   return request.get('/challenges/categories');
 }
 

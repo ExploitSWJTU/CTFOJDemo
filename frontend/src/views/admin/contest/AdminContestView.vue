@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, computed, watch } from 'vue'
 import { useRouter } from 'vue-router'
-import { Search, Plus, Edit, Trash2, ChevronLeft, ChevronRight } from 'lucide-vue-next'
+import { Search, Plus, Edit, Trash2, ChevronLeft, ChevronRight, Wrench } from 'lucide-vue-next'
 import { contestStore, deleteContest, updateContest } from '../../../stores/contestStore'
 
 const router = useRouter()
@@ -92,6 +92,11 @@ const toggleContestActive = (contest: { id: number; isActive?: boolean }) => {
   if (!success) {
     alert('更新失败')
   }
+}
+
+// 比赛设置/扳手操作（暂不跳转，后续可接设置页或弹窗）
+const handleContestSettings = (_id: number) => {
+  // 暂不设置跳转
 }
 </script>
 
@@ -211,6 +216,13 @@ const toggleContestActive = (contest: { id: number; isActive?: boolean }) => {
               </td>
               <td class="whitespace-nowrap px-6 py-4 text-right text-sm font-medium">
                 <div class="flex items-center justify-end gap-2">
+                  <button
+                    class="rounded-lg p-2 text-slate-600 transition-colors hover:bg-slate-100 hover:text-amber-600 dark:text-slate-400 dark:hover:bg-slate-800 dark:hover:text-amber-400"
+                    title="设置"
+                    @click="handleContestSettings(contest.id)"
+                  >
+                    <Wrench class="h-4 w-4" />
+                  </button>
                   <button
                     class="rounded-lg p-2 text-slate-600 transition-colors hover:bg-slate-100 hover:text-blue-600 dark:text-slate-400 dark:hover:bg-slate-800 dark:hover:text-blue-400"
                     title="编辑"

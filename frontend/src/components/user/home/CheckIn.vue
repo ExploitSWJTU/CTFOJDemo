@@ -1,8 +1,10 @@
 <script setup lang="ts">
-import { ref } from 'vue';
+import { ref, computed } from 'vue';
 import { CalendarCheck2, Sparkles } from 'lucide-vue-next';
+import { getCheckInConfig } from '../../../stores/homeStore';
 
 const isCheckedIn = ref(false);
+const checkInConfig = computed(() => getCheckInConfig());
 
 const handleCheckIn = () => {
   isCheckedIn.value = true;
@@ -10,7 +12,7 @@ const handleCheckIn = () => {
 </script>
 
 <template>
-  <div class="perspective-1000 relative flex flex-col h-full">
+  <div v-if="checkInConfig.enabled" class="perspective-1000 relative flex flex-col h-full">
     <Transition name="flip" mode="out-in">
       <!-- 未打卡状态 -->
       <div
@@ -55,7 +57,7 @@ const handleCheckIn = () => {
               今日运势
             </p>
             <h3 class="mt-0.5 text-2xl font-black text-blue-600 dark:text-blue-400">
-              中吉
+              {{ checkInConfig.fortune }}
             </h3>
           </div>
           <div class="text-right">
@@ -80,10 +82,10 @@ const handleCheckIn = () => {
             </div>
             <div>
               <p class="text-[11px] font-bold text-slate-800 dark:text-slate-200">
-                研究 SQL 注入
+                {{ checkInConfig.yiText }}
               </p>
               <p class="text-[9px] leading-tight text-slate-400 dark:text-slate-500">
-                万物皆可 Union，今天灵感爆棚
+                {{ checkInConfig.yiDesc }}
               </p>
             </div>
           </div>
@@ -95,10 +97,10 @@ const handleCheckIn = () => {
             </div>
             <div>
               <p class="text-[11px] font-bold text-slate-800 dark:text-slate-200">
-                强制删除容器
+                {{ checkInConfig.jiText }}
               </p>
               <p class="text-[9px] leading-tight text-slate-400 dark:text-slate-500">
-                小心没做完题数据就丢了
+                {{ checkInConfig.jiDesc }}
               </p>
             </div>
           </div>
@@ -115,10 +117,10 @@ const handleCheckIn = () => {
                 class="text-[9px] font-bold tracking-wider text-blue-600 uppercase dark:text-blue-400"
               >每日一题</span>
             </div>
-            <span class="font-mono text-[9px] text-slate-400 dark:text-slate-500">#PWN-082</span>
+            <span class="font-mono text-[9px] text-slate-400 dark:text-slate-500">#{{ checkInConfig.dailyChallengeId }}</span>
           </div>
           <div class="flex items-center justify-between">
-            <span class="mr-2 truncate text-[11px] font-bold text-slate-700 dark:text-slate-200">Easy_Heap_OverFlow</span>
+            <span class="mr-2 truncate text-[11px] font-bold text-slate-700 dark:text-slate-200">{{ checkInConfig.dailyChallengeTitle }}</span>
             <button
               class="rounded-button bg-blue-600 px-2.5 py-1 text-[9px] font-bold text-white shadow-md shadow-blue-200 transition-colors hover:bg-blue-700"
             >
@@ -130,7 +132,7 @@ const handleCheckIn = () => {
         <!-- 底部格言 -->
         <div class="mt-auto border-t border-blue-50 pt-2 text-center dark:border-slate-800/50">
           <p class="text-[9px] italic text-blue-400/80 dark:text-blue-500/80">
-            “ 真正的黑客，在命令行里寻找诗意。”
+            “ {{ checkInConfig.motto }} ”
           </p>
         </div>
       </div>

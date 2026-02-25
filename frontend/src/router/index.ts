@@ -3,6 +3,24 @@ import { createRouter, createWebHistory } from 'vue-router';
 const router = createRouter({
   history: createWebHistory(),
   routes: [
+    // 登录页（独立，无布局）
+    {
+      path: '/login',
+      name: 'login',
+      component: () => import('../views/share/LoginView.vue'),
+    },
+    // 注册页（独立，无布局）
+    {
+      path: '/register',
+      name: 'register',
+      component: () => import('../views/share/RegisterView.vue'),
+    },
+    // 重置密码页（独立，无布局）
+    {
+      path: '/reset-password',
+      name: 'resetPassword',
+      component: () => import('../views/share/ResetPasswordView.vue'),
+    },
     // 用户端路由
     {
       path: '/',
@@ -39,6 +57,16 @@ const router = createRouter({
           component: () => import('../views/user/forum/ForumView.vue'),
         },
         {
+          path: 'forum/create',
+          name: 'forumCreate',
+          component: () => import('../views/user/forum/ForumPostCreateView.vue'),
+        },
+        {
+          path: 'forum/:id',
+          name: 'forumPostDetail',
+          component: () => import('../views/user/forum/ForumPostDetailView.vue'),
+        },
+        {
           path: 'announcement',
           name: 'announcement',
           component: () => import('../views/user/announcement/AnnouncementListView.vue'),
@@ -47,6 +75,11 @@ const router = createRouter({
           path: 'announcement/:id',
           name: 'announcementDetail',
           component: () => import('../views/user/announcement/AnnouncementDetailView.vue'),
+        },
+        {
+          path: 'settings',
+          name: 'settings',
+          component: () => import('../views/user/settings/SettingsView.vue'),
         },
       ],
     },
@@ -57,16 +90,16 @@ const router = createRouter({
       children: [
         {
           path: '',
-          redirect: '/admin/manage/home',
+          redirect: '/admin/manage/dashboard',
+        },
+        {
+          path: 'dashboard',
+          name: 'adminManageDashboard',
+          component: () => import('../views/admin/dashboard/AdminHomeView.vue'),
         },
         {
           path: 'home',
           name: 'adminManageHome',
-          component: () => import('../views/admin/dashboard/AdminHomeView.vue'),
-        },
-        {
-          path: 'home-manage',
-          name: 'adminManageHomeManage',
           component: () => import('../views/admin/home/AdminHomeManageView.vue'),
         },
         {
@@ -93,6 +126,21 @@ const router = createRouter({
           path: 'forum',
           name: 'adminManageForum',
           component: () => import('../views/admin/forum/AdminForumView.vue'),
+        },
+        {
+          path: 'forum/create',
+          name: 'adminManageForumCreate',
+          component: () => import('../views/admin/forum/AdminForumCreateView.vue'),
+        },
+        {
+          path: 'forum/edit/:id',
+          name: 'adminManageForumEdit',
+          component: () => import('../views/admin/forum/AdminForumEditView.vue'),
+        },
+        {
+          path: 'forum/comments/:postId',
+          name: 'adminManageForumComments',
+          component: () => import('../views/admin/forum/AdminForumCommentsView.vue'),
         },
         {
           path: 'user',
@@ -123,6 +171,18 @@ const router = createRouter({
           path: 'setting',
           name: 'adminManageSetting',
           component: () => import('../views/admin/setting/AdminSettingView.vue'),
+        },
+      ],
+    },
+    // 管理员个人设置（与 /settings 内容相同）
+    {
+      path: '/admin/settings',
+      component: () => import('../layouts/AdminLayout.vue'),
+      children: [
+        {
+          path: '',
+          name: 'adminSettings',
+          component: () => import('../views/user/settings/SettingsView.vue'),
         },
       ],
     },

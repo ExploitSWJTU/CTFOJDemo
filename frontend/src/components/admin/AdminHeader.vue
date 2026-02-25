@@ -136,9 +136,12 @@ const serverStats = ref([
           </button>
 
           <!-- 设置 -->
-          <button class="rounded-lg p-2 text-slate-400 transition-colors hover:bg-slate-100 hover:text-blue-600 dark:hover:bg-slate-800 dark:hover:text-blue-400">
+          <router-link
+            to="/admin/settings"
+            class="rounded-lg p-2 text-slate-400 transition-colors hover:bg-slate-100 hover:text-blue-600 dark:hover:bg-slate-800 dark:hover:text-blue-400"
+          >
             <Settings :size="20" />
-          </button>
+          </router-link>
         </div>
 
         <!-- 头像 -->
@@ -164,21 +167,21 @@ const serverStats = ref([
                 </p>
               </div>
               <div class="my-1 h-px bg-slate-100 dark:bg-slate-800" />
-              <a
-                href="#"
+              <router-link
+                to="/admin/settings"
                 class="flex items-center gap-2 px-3 py-2 text-sm font-medium text-slate-600 hover:bg-slate-50 hover:text-slate-900 dark:text-slate-400 dark:hover:bg-slate-800 dark:hover:text-slate-100"
               >
                 <Edit :size="16" />
                 修改资料
-              </a>
+              </router-link>
               <div class="my-1 h-px bg-slate-100 dark:bg-slate-800" />
-              <a
-                href="#"
+              <router-link
+                to="/login"
                 class="flex items-center gap-2 px-3 py-2 text-sm font-medium text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20"
               >
                 <LogOut :size="16" />
                 退出管理
-              </a>
+              </router-link>
             </div>
           </template>
         </a-dropdown>

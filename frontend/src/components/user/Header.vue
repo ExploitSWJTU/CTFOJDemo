@@ -252,11 +252,12 @@ const containers = ref([
         >
           <Bell :size="20" />
         </button>
-        <button
+        <router-link
+          to="/settings"
           class="rounded-full p-2 text-slate-400 transition-colors hover:text-blue-600 dark:hover:text-blue-400"
         >
           <Settings :size="20" />
-        </button>
+        </router-link>
 
         <!-- 头像 -->
         <a-dropdown trigger="click" position="br">
@@ -281,21 +282,21 @@ const containers = ref([
                 </button>
               </div>
               <div class="my-1 h-px bg-slate-100 dark:bg-slate-800" />
-              <a
-                href="#"
+              <router-link
+                to="/settings"
                 class="flex items-center gap-2 px-3 py-2 text-sm font-medium text-slate-600 hover:bg-slate-50 hover:text-slate-900 dark:text-slate-400 dark:hover:bg-slate-800 dark:hover:text-slate-100"
               >
                 <Settings :size="16" />
                 个人设置
-              </a>
+              </router-link>
               <div class="my-1 h-px bg-slate-100 dark:bg-slate-800" />
-              <a
-                href="#"
+              <router-link
+                to="/login"
                 class="flex items-center gap-2 px-3 py-2 text-sm font-medium text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20"
               >
                 <LogOut :size="16" />
                 退出
-              </a>
+              </router-link>
             </div>
           </template>
         </a-dropdown>

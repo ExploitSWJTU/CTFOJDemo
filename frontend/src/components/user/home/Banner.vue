@@ -1,33 +1,50 @@
-<script setup lang="ts"></script>
+<script setup lang="ts">
+import { computed } from 'vue'
+import { getCarouselSlides } from '../../../stores/homeStore'
+
+const slides = computed(() => getCarouselSlides())
+</script>
 
 <template>
   <div class="group rounded-card relative h-full overflow-hidden bg-slate-800 shadow-lg">
     <a-carousel
+      v-if="slides.length > 0"
       class="rounded-card h-full w-full overflow-hidden"
       :auto-play="true"
       indicator-type="line"
       show-arrow="hover"
     >
-      <a-carousel-item v-for="i in 3" :key="i">
+      <a-carousel-item v-for="slide in slides" :key="slide.id">
         <div class="relative h-full w-full">
           <img
-            src="https://images.unsplash.com/photo-1550751827-4bd374c3f58b?auto=format&fit=crop&q=80&w=1200"
+            :src="slide.imageUrl"
             class="h-full w-full object-cover opacity-60 transition-transform duration-700 hover:scale-105"
+            :alt="slide.title"
           />
           <div
             class="pointer-events-none absolute inset-0 flex flex-col justify-end bg-linear-to-t from-slate-900/80 to-transparent p-10"
           >
-            <span class="mb-4 w-fit rounded-full bg-blue-600 px-3 py-1 text-xs font-bold text-white">
-              正在进行</span>
+            <span
+              v-if="slide.badge"
+              class="mb-4 w-fit rounded-full bg-blue-600 px-3 py-1 text-xs font-bold text-white"
+            >
+              {{ slide.badge }}
+            </span>
             <h2 class="mb-2 text-4xl font-black text-white">
-              SWJTU Rookie CTF Game 2026
+              {{ slide.title }}
             </h2>
             <p class="max-w-lg text-slate-200">
-              本年CTF新秀杯已经开启，点击进入赛事详情页面报名参赛。
+              {{ slide.subtitle }}
             </p>
           </div>
         </div>
       </a-carousel-item>
     </a-carousel>
+    <div
+      v-else
+      class="flex h-full items-center justify-center text-slate-400 dark:text-slate-500"
+    >
+      暂无轮播图
+    </div>
   </div>
 </template>

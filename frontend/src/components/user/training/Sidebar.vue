@@ -1,6 +1,9 @@
 <script setup lang="ts">
-import { Hash } from 'lucide-vue-next';
-const tags = ['#pwn', '#writeup', '#ctf2024', '#python', '#docker'];
+import { computed } from 'vue'
+import { Hash } from 'lucide-vue-next'
+import { homeStore } from '../../../stores/homeStore'
+
+const tags = computed(() => [...homeStore.hotTags])
 </script>
 
 <template>

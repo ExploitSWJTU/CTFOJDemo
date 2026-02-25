@@ -19,7 +19,7 @@ import AdminHeader from '../components/admin/AdminHeader.vue';
 const route = useRoute();
 
 const menuItems = [
-  { name: '首页管理', path: '/admin/manage/home-manage', icon: LayoutGrid },
+  { name: '首页管理', path: '/admin/manage/home', icon: LayoutGrid },
   { name: '训练题目', path: '/admin/manage/training', icon: Swords },
   { name: '赛事管理', path: '/admin/manage/contest', icon: Flag },
   { name: '论坛管理', path: '/admin/manage/forum', icon: MessageSquare },
@@ -32,7 +32,7 @@ const menuItems = [
 ];
 
 const activeTab = computed(() => {
-  if (route.path === '/admin/manage/home') return '/admin/manage/home';
+  if (route.path === '/admin/manage/dashboard') return '/admin/manage/dashboard';
   const item = menuItems.find((item) => route.path.startsWith(item.path));
   return item ? item.path : '';
 });
@@ -47,16 +47,16 @@ const activeTab = computed(() => {
         <div class="sticky top-16 flex flex-col items-center py-4 gap-2">
           <div class="mb-4 pb-4 border-b border-slate-100 dark:border-slate-800 w-full flex justify-center">
             <router-link
-              to="/admin/manage/home"
+              to="/admin/manage/dashboard"
               class="relative flex items-center justify-center w-12 h-12 transition-all group"
               :class="
-                activeTab === '/admin/manage/home'
+                activeTab === '/admin/manage/dashboard'
                   ? 'text-blue-600 dark:text-blue-400'
                   : 'text-slate-400 hover:text-slate-900 dark:hover:text-slate-100'
               "
             >
               <div 
-                v-if="activeTab === '/admin/manage/home'"
+                v-if="activeTab === '/admin/manage/dashboard'"
                 class="absolute left-0 top-0 bottom-0 w-1 bg-blue-600 dark:bg-blue-400"
               />
               <LayoutDashboard :size="22" class="transition-transform group-hover:scale-110" />
@@ -102,7 +102,7 @@ const activeTab = computed(() => {
         </div>
       </aside>
       <!-- 内容区域：移除最大宽度限制，全屏铺满 -->
-      <main class="flex-1 min-w-0 bg-slate-50 dark:bg-slate-950 p-8 overflow-y-auto">
+      <main class="flex-1 min-w-0 min-h-0 bg-slate-50 dark:bg-slate-950 p-8 overflow-y-auto overflow-x-hidden">
         <router-view />
       </main>
     </div>
