@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref, computed, watch } from 'vue'
-import { Container, Cpu, Layers, Search, RefreshCw } from 'lucide-vue-next'
+import { Container, Search, RefreshCw } from 'lucide-vue-next'
 
 interface InstanceRow {
   id: number
@@ -9,17 +9,36 @@ interface InstanceRow {
   avatar: string
   ip: string
   port: number
-  cpu: number
-  ram: number
+  /** 开始时间 */
+  startTime: string
+  /** 结束时间 */
+  endTime: string
+  /** 容器 ID */
+  containerId: string
 }
 
-// 模拟活跃实例数据（与 training 实例监控一致的数据结构）
+// 模拟活跃实例数据：用户、题目、生命周期（开始时间到结束时间）、容器 ID、访问入口
 const activeInstances = ref<InstanceRow[]>([
-  { id: 1, challenge: 'Easy_Heap_Overflow', user: 'rikka', avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=rikka', ip: '10.10.10.101', port: 12345, cpu: 12, ram: 24 },
-  { id: 2, challenge: 'SQL_Injection_Advanced', user: 'admin', avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=admin', ip: '10.10.10.102', port: 54321, cpu: 45, ram: 62 },
-  { id: 3, challenge: 'Web_XSS_Challenge', user: 'user1', avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=user1', ip: '10.10.10.103', port: 8080, cpu: 28, ram: 128 },
-  { id: 4, challenge: 'Pwn_Stack_Overflow', user: 'user2', avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=user2', ip: '10.10.10.104', port: 31337, cpu: 8, ram: 64 },
-  { id: 5, challenge: 'Misc_Stegano', user: 'rikka', avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=rikka', ip: '10.10.10.105', port: 9000, cpu: 5, ram: 32 },
+  { id: 1, challenge: 'Easy_Heap_Overflow', user: 'rikka', avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=rikka', ip: '10.10.10.101', port: 12345, startTime: '02-25 13:00', endTime: '02-25 14:00', containerId: 'a1b2c3d4e5f6' },
+  { id: 2, challenge: 'SQL_Injection_Advanced', user: 'admin', avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=admin', ip: '10.10.10.102', port: 54321, startTime: '02-25 12:30', endTime: '02-25 14:00', containerId: 'b2c3d4e5f6a7' },
+  { id: 3, challenge: 'Web_XSS_Challenge', user: 'user1', avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=user1', ip: '10.10.10.103', port: 8080, startTime: '02-25 14:10', endTime: '02-25 14:33', containerId: 'c3d4e5f6a7b8' },
+  { id: 4, challenge: 'Pwn_Stack_Overflow', user: 'user2', avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=user2', ip: '10.10.10.104', port: 31337, startTime: '02-25 13:15', endTime: '02-25 14:01', containerId: 'd4e5f6a7b8c9' },
+  { id: 5, challenge: 'Misc_Stegano', user: 'rikka', avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=rikka', ip: '10.10.10.105', port: 9000, startTime: '02-25 12:45', endTime: '02-25 14:00', containerId: 'e5f6a7b8c9d0' },
+  { id: 6, challenge: 'Crypto_RSA_Intro', user: 'ctfer01', avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=c1', ip: '10.10.10.106', port: 2222, startTime: '02-25 13:22', endTime: '02-25 14:00', containerId: 'f6a7b8c9d0e1' },
+  { id: 7, challenge: 'Reverse_Crackme', user: 'ctfer02', avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=c2', ip: '10.10.10.107', port: 3333, startTime: '02-25 14:20', endTime: '02-25 14:33', containerId: 'a7b8c9d0e1f2' },
+  { id: 8, challenge: 'Web_SSRF', user: 'user3', avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=user3', ip: '10.10.10.108', port: 4444, startTime: '02-25 13:00', endTime: '02-25 14:00', containerId: 'b8c9d0e1f2a3' },
+  { id: 9, challenge: 'Pwn_Format_String', user: 'admin', avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=admin', ip: '10.10.10.109', port: 5555, startTime: '02-25 13:05', endTime: '02-25 14:01', containerId: 'c9d0e1f2a3b4' },
+  { id: 10, challenge: 'Misc_QR_Code', user: 'rikka', avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=rikka', ip: '10.10.10.110', port: 6666, startTime: '02-25 13:32', endTime: '02-25 14:00', containerId: 'd0e1f2a3b4c5' },
+  { id: 11, challenge: 'Web_File_Upload', user: 'user1', avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=user1', ip: '10.10.10.111', port: 7777, startTime: '02-25 13:19', endTime: '02-25 14:00', containerId: 'e1f2a3b4c5d6' },
+  { id: 12, challenge: 'Crypto_AES_ECB', user: 'ctfer03', avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=c3', ip: '10.10.10.112', port: 8888, startTime: '02-25 12:38', endTime: '02-25 14:01', containerId: 'f2a3b4c5d6e7' },
+  { id: 13, challenge: 'Reverse_Packer', user: 'user2', avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=user2', ip: '10.10.10.113', port: 9999, startTime: '02-25 13:52', endTime: '02-25 14:01', containerId: 'a3b4c5d6e7f8' },
+  { id: 14, challenge: 'Pwn_ROP_Chain', user: 'ctfer01', avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=c1', ip: '10.10.10.114', port: 10000, startTime: '02-25 13:27', endTime: '02-25 14:00', containerId: 'b4c5d6e7f8a9' },
+  { id: 15, challenge: 'Web_JWT_Weak', user: 'admin', avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=admin', ip: '10.10.10.115', port: 10001, startTime: '02-25 12:55', endTime: '02-25 14:01', containerId: 'c5d6e7f8a9b0' },
+  { id: 16, challenge: 'Misc_Network_Pcap', user: 'user3', avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=user3', ip: '10.10.10.116', port: 10002, startTime: '02-25 13:43', endTime: '02-25 14:01', containerId: 'd6e7f8a9b0c1' },
+  { id: 17, challenge: 'SQL_Blind_Inject', user: 'rikka', avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=rikka', ip: '10.10.10.117', port: 10003, startTime: '02-25 13:12', endTime: '02-25 14:01', containerId: 'e7f8a9b0c1d2' },
+  { id: 18, challenge: 'Crypto_Hash_Collision', user: 'ctfer02', avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=c2', ip: '10.10.10.118', port: 10004, startTime: '02-25 13:07', endTime: '02-25 14:02', containerId: 'f8a9b0c1d2e3' },
+  { id: 19, challenge: 'Reverse_Anti_Debug', user: 'user1', avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=user1', ip: '10.10.10.119', port: 10005, startTime: '02-25 13:50', endTime: '02-25 14:02', containerId: 'a9b0c1d2e3f4' },
+  { id: 20, challenge: 'Pwn_Shellcode', user: 'user2', avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=user2', ip: '10.10.10.120', port: 10006, startTime: '02-25 12:41', endTime: '02-25 14:00', containerId: 'b0c1d2e3f4a5' },
 ])
 
 const searchQuery = ref('')
@@ -33,7 +52,8 @@ const filteredInstances = computed(() => {
     (inst) =>
       inst.user.toLowerCase().includes(q) ||
       inst.challenge.toLowerCase().includes(q) ||
-      inst.ip.includes(q)
+      inst.ip.includes(q) ||
+      inst.containerId.toLowerCase().includes(q)
   )
 })
 
@@ -82,7 +102,7 @@ function refreshList() {
           <input
             v-model="searchQuery"
             type="text"
-            placeholder="搜索用户 / 题目 / IP..."
+            placeholder="搜索用户 / 题目 / IP / 容器 ID..."
             class="w-full h-9 pl-9 pr-4 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-lg text-xs outline-none focus:border-blue-500 transition-all"
           />
         </div>
@@ -97,22 +117,28 @@ function refreshList() {
       </div>
     </div>
 
-    <!-- 实例列表表格（与 training 实例监控同款样式） -->
+    <!-- 实例列表：用户、题目、生命周期、容器 ID、访问入口 -->
     <div class="bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl overflow-hidden shadow-sm">
       <table class="w-full text-left border-collapse text-xs">
         <thead>
           <tr class="bg-slate-50 dark:bg-slate-900 text-[10px] font-black text-slate-400 uppercase tracking-widest border-b border-slate-200 dark:border-slate-800">
             <th class="px-4 py-3">
-              User / Challenge
+              用户
             </th>
             <th class="px-4 py-3">
-              Endpoint
+              题目
             </th>
             <th class="px-4 py-3">
-              Resources
+              生命周期
+            </th>
+            <th class="px-4 py-3">
+              容器 ID
+            </th>
+            <th class="px-4 py-3">
+              访问入口
             </th>
             <th class="px-4 py-3 text-right">
-              Actions
+              操作
             </th>
           </tr>
         </thead>
@@ -123,32 +149,26 @@ function refreshList() {
             class="hover:bg-slate-50/50 dark:hover:bg-slate-900/30 transition-colors"
           >
             <td class="px-4 py-3">
-              <div class="flex items-center gap-3">
+              <div class="flex items-center gap-2">
                 <img
                   :src="inst.avatar"
-                  class="w-7 h-7 rounded-full border border-slate-200 dark:border-slate-700"
+                  class="w-7 h-7 rounded-full border border-slate-200 dark:border-slate-700 shrink-0"
                   :alt="inst.user"
                 />
-                <div>
-                  <div class="text-xs font-bold text-slate-800 dark:text-slate-100">
-                    @{{ inst.user }}
-                  </div>
-                  <div class="text-[10px] font-bold text-slate-400 uppercase tracking-tighter">
-                    {{ inst.challenge }}
-                  </div>
-                </div>
+                <span class="font-bold text-slate-800 dark:text-slate-100">{{ inst.user }}</span>
               </div>
+            </td>
+            <td class="px-4 py-3 text-slate-700 dark:text-slate-200">
+              {{ inst.challenge }}
+            </td>
+            <td class="px-4 py-3 font-mono text-xs text-slate-600 dark:text-slate-300">
+              {{ inst.startTime }} 至 {{ inst.endTime }}
+            </td>
+            <td class="px-4 py-3 font-mono text-[10px] text-slate-500 dark:text-slate-400">
+              {{ inst.containerId }}
             </td>
             <td class="px-4 py-3 font-mono text-blue-600 dark:text-blue-400 font-bold">
               {{ inst.ip }}:{{ inst.port }}
-            </td>
-            <td class="px-4 py-3">
-              <div class="flex items-center gap-2">
-                <Cpu :size="12" class="text-slate-400" />
-                <span class="font-mono">{{ inst.cpu }}%</span>
-                <Layers :size="12" class="text-slate-400 ml-2" />
-                <span class="font-mono">{{ inst.ram }}M</span>
-              </div>
             </td>
             <td class="px-4 py-3 text-right">
               <button
@@ -156,7 +176,7 @@ function refreshList() {
                 class="px-2 py-1 bg-rose-50 dark:bg-rose-900/20 text-rose-600 text-[10px] font-bold rounded border border-rose-100 dark:border-rose-900/30 hover:bg-rose-100 dark:hover:bg-rose-900/30 transition-colors"
                 @click="destroyInstance(inst)"
               >
-                Destroy
+                销毁
               </button>
             </td>
           </tr>

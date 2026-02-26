@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref, computed, watch } from 'vue'
-import { Search, Plus, Edit, Trash2, X, Save, ChevronLeft, ChevronRight } from 'lucide-vue-next'
+import { Search, Plus, Edit, Trash2, X, Save, ChevronLeft, ChevronRight, Lock } from 'lucide-vue-next'
 import type { User, UserRole } from '../../../types/user'
 import { users as mockUsers } from '../../../mock/users'
 
@@ -189,6 +189,50 @@ const deleteUser = (user: User) => {
   }
 }
 
+// 重置密码弹窗
+const showResetDialog = ref(false)
+const resetTargetUser = ref<User | null>(null)
+const resetPasswordForm = ref({
+  password: '',
+  confirm: '',
+})
+
+// 打开重置密码弹窗
+const openResetDialog = (user: User) => {
+  resetTargetUser.value = user
+  resetPasswordForm.value = {
+    password: '',
+    confirm: '',
+  }
+  showResetDialog.value = true
+}
+
+const closeResetDialog = () => {
+  showResetDialog.value = false
+  resetTargetUser.value = null
+  resetPasswordForm.value = {
+    password: '',
+    confirm: '',
+  }
+}
+
+// 提交重置密码
+const submitResetPassword = () => {
+  if (!resetTargetUser.value) return
+  const { password, confirm } = resetPasswordForm.value
+  if (!password) {
+    alert('请输入新密码')
+    return
+  }
+  if (password !== confirm) {
+    alert('两次输入的密码不一致')
+    return
+  }
+  // TODO: 接入后端接口，将该用户密码重置为 password
+  alert(`已将用户「${resetTargetUser.value.username}」的密码重置为：${password}`)
+  closeResetDialog()
+}
+
 // 获取角色标签
 const getRoleLabel = (role: UserRole) => {
   return role === 'admin' ? '管理员' : '用户'
@@ -300,6 +344,13 @@ const getRoleClass = (role: UserRole) => {
                     @click="openEditDialog(user)"
                   >
                     <Edit class="h-4 w-4" />
+                  </button>
+                  <button
+                    class="rounded-lg p-2 text-slate-600 transition-colors hover:bg-slate-100 hover:text-amber-600 dark:text-slate-400 dark:hover:bg-slate-800 dark:hover:text-amber-400"
+                    title="重置密码"
+                    @click="openResetDialog(user)"
+                  >
+                    <Lock class="h-4 w-4" />
                   </button>
                   <button
                     class="rounded-lg p-2 text-slate-600 transition-colors hover:bg-slate-100 hover:text-red-600 dark:text-slate-400 dark:hover:bg-slate-800 dark:hover:text-red-400"
@@ -490,6 +541,81 @@ const getRoleClass = (role: UserRole) => {
           >
             <Save class="h-4 w-4" />
             保存
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 重置密码弹出卡片 -->
+    <div
+      v-if="showResetDialog"
+      class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4"
+      @click.self="closeResetDialog"
+    >
+      <div
+        class="w-full max-w-sm rounded-xl border border-slate-200 bg-white shadow-xl dark:border-slate-800 dark:bg-slate-900"
+      >
+        <div class="flex items-center justify-between border-b border-slate-200 px-6 py-4 dark:border-slate-800">
+          <div>
+            <h3 class="text-lg font-bold text-slate-900 dark:text-slate-100">
+              重置密码
+            </h3>
+            <p class="mt-1 text-xs text-slate-500 dark:text-slate-400">
+              为用户「{{ resetTargetUser?.username }}」设置一个新的登录密码。
+            </p>
+          </div>
+          <button
+            class="rounded-lg p-1 text-slate-400 transition-colors hover:bg-slate-100 hover:text-slate-900 dark:hover:bg-slate-800 dark:hover:text-slate-100"
+            @click="closeResetDialog"
+          >
+            <X class="h-5 w-5" />
+          </button>
+        </div>
+        <div class="px-6 py-4">
+          <div class="space-y-4">
+            <div>
+              <label class="mb-2 block text-sm font-medium text-slate-700 dark:text-slate-300">
+                新密码 <span class="text-red-500">*</span>
+              </label>
+              <input
+                v-model="resetPasswordForm.password"
+                type="password"
+                class="h-10 w-full rounded-lg border border-slate-200 bg-slate-50 px-3 text-sm outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-200"
+                placeholder="请输入新密码"
+                autocomplete="new-password"
+              />
+            </div>
+            <div>
+              <label class="mb-2 block text-sm font-medium text-slate-700 dark:text-slate-300">
+                确认密码 <span class="text-red-500">*</span>
+              </label>
+              <input
+                v-model="resetPasswordForm.confirm"
+                type="password"
+                class="h-10 w-full rounded-lg border border-slate-200 bg-slate-50 px-3 text-sm outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-200"
+                placeholder="请再次输入新密码"
+                autocomplete="new-password"
+              />
+            </div>
+          </div>
+        </div>
+        <div
+          class="flex items-center justify-end gap-2 border-t border-slate-200 px-6 py-3 dark:border-slate-800"
+        >
+          <button
+            class="rounded-lg border border-slate-200 px-4 py-2 text-sm font-medium text-slate-600 hover:bg-slate-50 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-200 dark:hover:bg-slate-700"
+            type="button"
+            @click="closeResetDialog"
+          >
+            取消
+          </button>
+          <button
+            class="flex items-center gap-1 rounded-lg bg-blue-600 px-4 py-2 text-sm font-bold text-white hover:bg-blue-700"
+            type="button"
+            @click="submitResetPassword"
+          >
+            <Save class="h-4 w-4" />
+            确认重置
           </button>
         </div>
       </div>
