@@ -42,6 +42,16 @@ const router = createRouter({
           component: () => import('../views/user/contest/ContestListView.vue'),
         },
         {
+          path: 'contest/:id/challenges',
+          name: 'contestChallenges',
+          component: () => import('../views/user/contest/ContestChallengesView.vue'),
+        },
+        {
+          path: 'contest/:id/scoreboard',
+          name: 'contestScoreboard',
+          component: () => import('../views/user/contest/ContestScoreboardView.vue'),
+        },
+        {
           path: 'contest/:id',
           name: 'contestDetail',
           component: () => import('../views/user/contest/ContestDetailView.vue'),
@@ -121,6 +131,70 @@ const router = createRouter({
           path: 'contest/edit/:id',
           name: 'adminManageContestEdit',
           component: () => import('../views/admin/contest/AdminContestEditView.vue'),
+        },
+        {
+          path: 'contest/:id',
+          component: () => import('../views/admin/contest/AdminContestDetailLayout.vue'),
+          children: [
+            { path: '', redirect: (to) => ({ path: `${to.path}/info` }) },
+            {
+              path: 'info',
+              name: 'adminContestInfo',
+              component: () => import('../views/admin/contest/AdminContestSectionInfo.vue'),
+            },
+            {
+              path: 'announcement',
+              name: 'adminContestAnnouncement',
+              component: () => import('../views/admin/contest/AdminContestSectionAnnouncement.vue'),
+            },
+            {
+              path: 'challenges',
+              name: 'adminContestChallenges',
+              component: () => import('../views/admin/contest/AdminContestSectionChallenges.vue'),
+            },
+            {
+              path: 'challenges/:challengeId',
+              name: 'adminContestChallengeEdit',
+              component: () => import('../views/admin/contest/AdminContestChallengeEditView.vue'),
+            },
+            {
+              path: 'challenges/:challengeId/flag',
+              name: 'adminContestChallengeFlag',
+              component: () => import('../views/admin/contest/AdminContestChallengeFlagView.vue'),
+            },
+            {
+              path: 'monitor',
+              component: () => import('../views/admin/contest/AdminContestMonitorOutlet.vue'),
+              redirect: (to) => ({ path: `${to.path}/submissions` }),
+              children: [
+                {
+                  path: 'submissions',
+                  name: 'adminContestMonitorSubmissions',
+                  component: () => import('../views/admin/contest/AdminContestMonitorSubmissions.vue'),
+                },
+                {
+                  path: 'containers',
+                  name: 'adminContestMonitorContainers',
+                  component: () => import('../views/admin/contest/AdminContestMonitorContainers.vue'),
+                },
+                {
+                  path: 'same-flag',
+                  name: 'adminContestMonitorSameFlag',
+                  component: () => import('../views/admin/contest/AdminContestMonitorSameFlag.vue'),
+                },
+              ],
+            },
+            {
+              path: 'team-review',
+              name: 'adminContestTeamReview',
+              component: () => import('../views/admin/contest/AdminContestSectionTeamReview.vue'),
+            },
+            {
+              path: 'writeups',
+              name: 'adminContestWriteups',
+              component: () => import('../views/admin/contest/AdminContestSectionWriteups.vue'),
+            },
+          ],
         },
         {
           path: 'forum',

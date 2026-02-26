@@ -4,9 +4,14 @@ import type { Challenge } from '../../../types/challenge';
 import { CATEGORY_MAP } from '../../../constants/category';
 import { computed } from 'vue';
 
-const props = defineProps<{
-  challenge: Challenge;
-}>();
+const props = withDefaults(
+  defineProps<{
+    challenge: Challenge;
+    /** 是否显示右下角难度标签（比赛页可不显示） */
+    showDifficulty?: boolean;
+  }>(),
+  { showDifficulty: true }
+);
 
 const emit = defineEmits<{
   (e: 'view-details', id: number): void;
@@ -103,6 +108,7 @@ const difficultyColor = computed(() => {
           </div>
         </div>
         <span
+          v-if="showDifficulty"
           class="rounded-full px-2 py-0.5 text-xs font-bold"
           :class="difficultyColor"
         >

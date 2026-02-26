@@ -94,9 +94,9 @@ const toggleContestActive = (contest: { id: number; isActive?: boolean }) => {
   }
 }
 
-// 比赛设置/扳手操作（暂不跳转，后续可接设置页或弹窗）
-const handleContestSettings = (_id: number) => {
-  // 暂不设置跳转
+// 比赛设置/扳手：跳转到比赛管理页 /admin/manage/contest/:id
+const handleContestSettings = (id: number) => {
+  router.push({ path: `/admin/manage/contest/${id}` })
 }
 </script>
 

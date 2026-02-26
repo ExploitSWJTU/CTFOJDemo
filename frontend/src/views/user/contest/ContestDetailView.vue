@@ -126,8 +126,7 @@ const handleRegister = () => {
   } else {
     // 已报名后的操作
     if (contest.value?.status === 'ongoing') {
-      // TODO: 进入比赛
-      alert('进入比赛功能待实现')
+      router.push({ path: `/contest/${contestId.value}/challenges` })
     } else if (contest.value?.status === 'upcoming') {
       // 等待比赛开始，可能不需要操作
       alert('比赛尚未开始，请等待')
