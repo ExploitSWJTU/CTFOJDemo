@@ -12,7 +12,7 @@
     "dev:backend:debug": "cd backend && dlv debug ./cmd/server --headless --listen=:2345 --api-version=2",
     "dev:infra": "./scripts/docker-start.sh",
     "stop:infra": "./scripts/docker-stop.sh",
-    "build": "pnpm --dir frontend build",
+    "build": "cd frontend && pnpm install && pnpm build",
     "lint": "pnpm lint:frontend",
     "lint:frontend": "pnpm --dir frontend lint",
     "lint:fix": "pnpm --dir frontend lint:fix",

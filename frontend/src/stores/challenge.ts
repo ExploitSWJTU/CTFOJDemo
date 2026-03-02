@@ -1,6 +1,7 @@
 import { defineStore } from 'pinia';
 import { ref } from 'vue';
 import type { Challenge, ContainerInfo } from '@/types/challenge';
+import { getChallenges, getChallenge } from '@/api/challenge';
 
 export const useChallengeStore = defineStore('challenge', () => {
   // State
@@ -19,29 +20,30 @@ export const useChallengeStore = defineStore('challenge', () => {
     error.value = null;
 
     try {
-      // TODO: Replace with actual API call
-      // const response = await api.getChallenges(params);
-      // challenges.value = response.data.items;
-      console.log('Fetching challenges with params:', params);
-    } catch (err) {
-      error.value = 'Failed to fetch challenges';
-      console.error(err);
+      const response = await getChallenges(params);
+      challenges.value = response.items || [];
+      return response;
+    } catch (err: any) {
+      error.value = err?.msg || 'Failed to fetch challenges';
+      console.error('Fetch challenges error:', err);
+      return null;
     } finally {
       loading.value = false;
     }
   }
 
-  async function fetchChallenge(_id: number) {
+  async function fetchChallenge(id: number) {
     loading.value = true;
     error.value = null;
 
     try {
-      // TODO: Replace with actual API call
-      // const response = await api.getChallenge(id);
-      // currentChallenge.value = response.data;
-    } catch (err) {
-      error.value = 'Failed to fetch challenge';
-      console.error(err);
+      const response = await getChallenge(id);
+      currentChallenge.value = response;
+      return response;
+    } catch (err: any) {
+      error.value = err?.msg || 'Failed to fetch challenge';
+      console.error('Fetch challenge error:', err);
+      return null;
     } finally {
       loading.value = false;
     }
