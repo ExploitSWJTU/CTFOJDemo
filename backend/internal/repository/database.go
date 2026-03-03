@@ -63,7 +63,7 @@ func NewDatabase(config *Config) (*Database, error) {
 }
 
 // AutoMigrate runs auto migration for given models
-func (d *Database) AutoMigrate(models ...interface{}) error {
+func (d *Database) AutoMigrate(models ...any) error {
 	return d.DB.AutoMigrate(models...)
 }
 
