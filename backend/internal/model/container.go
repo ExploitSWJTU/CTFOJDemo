@@ -16,6 +16,7 @@ const (
 	ContainerStatusStopped  ContainerStatus = "stopped"
 	ContainerStatusExpired  ContainerStatus = "expired"
 	ContainerStatusCreating ContainerStatus = "creating"
+	ContainerStatusFailed   ContainerStatus = "failed"
 )
 
 // Container represents a running Docker container instance for a challenge
@@ -23,10 +24,14 @@ type Container struct {
 	ID          uint           `gorm:"primaryKey" json:"id"`
 	UserID      uint           `gorm:"index" json:"user_id"`
 	ChallengeID uint           `gorm:"index" json:"challenge_id"`
-	ContainerID string         `gorm:"size:100" json:"container_id"`            // Docker container ID
-	PortMapping datatypes.JSON `gorm:"type:jsonb" json:"port_mapping"`          // {"80/tcp": 32001}
-	Flag        string         `gorm:"size:255" json:"-"`                       // Flag for this instance
-	Status      string         `gorm:"size:20;default:'running'" json:"status"` // running | stopped | expired
+	ContainerID string         `gorm:"size:100" json:"container_id"`
+	PortMapping datatypes.JSON `gorm:"type:jsonb" json:"port_mapping"`
+	HostPort    int            `gorm:"index" json:"host_port"`
+	AccessHost  string         `gorm:"size:255" json:"access_host"`
+	Flag        string         `gorm:"size:255" json:"-"`
+	Status      string         `gorm:"size:20;default:'running'" json:"status"`
+	LastError   string         `gorm:"type:text" json:"last_error,omitempty"`
+	StartedAt   *time.Time     `json:"started_at,omitempty"`
 	ExpiresAt   time.Time      `json:"expires_at"`
 	CreatedAt   time.Time      `json:"created_at"`
 	UpdatedAt   time.Time      `json:"updated_at"`

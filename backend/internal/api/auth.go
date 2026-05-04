@@ -73,11 +73,12 @@ func (a *AuthAPI) Login(c *gin.Context) {
 	c.JSON(http.StatusOK, model.SuccessResponse(gin.H{
 		"token": token,
 		"user": gin.H{
-			"id":       user.ID,
-			"username": user.Username,
-			"email":    user.Email,
-			"role":     user.Role,
-			"score":    user.Score,
+			"id":         user.ID,
+			"username":   user.Username,
+			"email":      user.Email,
+			"role":       user.Role,
+			"score":      user.Score,
+			"created_at": user.CreatedAt,
 		},
 	}))
 }
@@ -141,11 +142,12 @@ func (a *AuthAPI) Register(c *gin.Context) {
 	c.JSON(http.StatusOK, model.SuccessResponse(gin.H{
 		"token": token,
 		"user": gin.H{
-			"id":       user.ID,
-			"username": user.Username,
-			"email":    user.Email,
-			"role":     user.Role,
-			"score":    user.Score,
+			"id":         user.ID,
+			"username":   user.Username,
+			"email":      user.Email,
+			"role":       user.Role,
+			"score":      user.Score,
+			"created_at": user.CreatedAt,
 		},
 	}))
 }
@@ -167,10 +169,11 @@ func (a *AuthAPI) GetCurrentUser(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, model.SuccessResponse(gin.H{
-		"id":       user.ID,
-		"username": user.Username,
-		"email":    user.Email,
-		"role":     user.Role,
-		"score":    user.Score,
+		"id":         user.ID,
+		"username":   user.Username,
+		"email":      user.Email,
+		"role":       user.Role,
+		"score":      user.Score,
+		"created_at": user.CreatedAt,
 	}))
 }
